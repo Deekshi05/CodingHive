@@ -26,21 +26,30 @@ const generateRefreshToken = ({ userId, username, email }) =>
 
 export const RegisterController = async (req, res) => {
   try {
-    const { username, email, password } = req.body;
-
+    const { username, email, password, handles } = req.body;
     let user = await User.findOne({ email });
     if (user) return res.status(400).json({ message: "User already exists" });
 
     const hashedPassword = await hashPassword(password);
 
-    try{
-    user = new User({ username, email, password: hashedPassword });
-    await user.save();
-    }catch(err){
-        console.error("User creation failed:", err.message);
+    try {
+      user = new User({
+        username,
+        email,
+        password: hashedPassword,
+        handles: handles || {} 
+      });
+      await user.save();
+    } catch (err) {
+      console.error("User creation failed:", err.message);
+      return res.status(500).json({ message: "User creation failed" });
     }
 
-    const tokenPayload = { userId: user._id, username: user.username, email: user.email };
+    const tokenPayload = {
+      userId: user._id,
+      username: user.username,
+      email: user.email,
+    };
 
     const accessToken = generateAccessToken(tokenPayload);
     const refreshToken = generateRefreshToken(tokenPayload);
@@ -49,12 +58,12 @@ export const RegisterController = async (req, res) => {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "Strict",
-      maxAge: 7 * 24 * 60 * 60 * 1000,
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     });
 
     res.status(201).json({ accessToken });
   } catch (error) {
-    console.error(error);
+    console.error("Registration error:", error);
     res.status(500).json({ message: "Server Error" });
   }
 };

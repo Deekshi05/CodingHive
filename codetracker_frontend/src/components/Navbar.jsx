@@ -2,21 +2,21 @@ import React, { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { FaSignInAlt, FaUserPlus } from "react-icons/fa";
 import axios from "axios";
-import "./Navbar.css";
 
 export default function Navbar() {
   const location = useLocation();
   const navigate = useNavigate();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-  // Check auth status on mount and when location changes
   useEffect(() => {
     const token = localStorage.getItem("accessToken");
     setIsLoggedIn(!!token);
   }, [location]);
 
   const navLinkClass = (path) =>
-    location.pathname === path ? "nav-link active" : "nav-link";
+    location.pathname === path
+      ? "nav-link text-blue-600 font-semibold"
+      : "nav-link text-gray-700 hover:text-blue-500";
 
   const handleLogout = async () => {
     try {
@@ -34,7 +34,7 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="navbar">
+    <nav className="flex items-center space-x-6 bg-gray-100 p-4 shadow-md">
       <Link to="/" className={navLinkClass("/")}>
         Home
       </Link>
@@ -45,33 +45,27 @@ export default function Navbar() {
         Profile
       </Link>
 
-      {!isLoggedIn ? (
-        <>
-          <Link to="/login" className={navLinkClass("/login")}>
-            <FaSignInAlt style={{ marginRight: 5 }} />
-            Login
-          </Link>
-          <Link to="/register" className={navLinkClass("/register")}>
-            <FaUserPlus style={{ marginRight: 5 }} />
-            Register
-          </Link>
-        </>
-      ) : (
-        <button
-          onClick={handleLogout}
-          className="nav-link logout-button"
-          style={{
-            background: "none",
-            border: "none",
-            cursor: "pointer",
-            color: "#3e2c25",
-            padding: 0,
-            marginLeft: "10px",
-          }}
-        >
-          Logout
-        </button>
-      )}
+      <div className="ml-auto flex items-center space-x-4">
+        {!isLoggedIn ? (
+          <>
+            <Link to="/login" className={navLinkClass("/login") + " flex items-center"}>
+              <FaSignInAlt className="mr-1" />
+              Login
+            </Link>
+            <Link to="/register" className={navLinkClass("/register") + " flex items-center"}>
+              <FaUserPlus className="mr-1" />
+              Register
+            </Link>
+          </>
+        ) : (
+          <button
+            onClick={handleLogout}
+            className="text-gray-700 hover:text-red-600 font-semibold cursor-pointer flex items-center"
+          >
+            Logout
+          </button>
+        )}
+      </div>
     </nav>
   );
 }
