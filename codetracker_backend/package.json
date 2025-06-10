@@ -17,6 +17,8 @@
     "cheerio": "^1.0.0",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
+    "dayjs": "^1.11.13",
+    "dayjs-plugin-utc": "^0.1.2",
     "dotenv": "^16.5.0",
     "express": "^5.1.0",
     "fast-xml-parser": "^5.2.3",
@@ -25,6 +27,7 @@
     "mongoose": "^8.15.1",
     "router": "^2.2.0",
     "rss-parser": "^3.13.0",
+    "timezone": "^1.0.23",
     "zod": "^3.25.51"
   }
 }

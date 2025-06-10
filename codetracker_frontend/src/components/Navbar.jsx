@@ -15,8 +15,8 @@ export default function Navbar() {
 
   const navLinkClass = (path) =>
     location.pathname === path
-      ? "nav-link text-blue-600 font-semibold"
-      : "nav-link text-gray-700 hover:text-blue-500";
+      ? "text-green-400 font-semibold"
+      : "text-gray-300 hover:text-green-300";
 
   const handleLogout = async () => {
     try {
@@ -34,25 +34,27 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="flex items-center space-x-6 bg-gray-100 p-4 shadow-md">
-      <Link to="/" className={navLinkClass("/")}>
-        Home
-      </Link>
-      <Link to="/dashboard" className={navLinkClass("/dashboard")}>
-        Dashboard
-      </Link>
-      <Link to="/profile" className={navLinkClass("/profile")}>
-        Profile
-      </Link>
+    <nav className="flex items-center px-6 py-4 bg-gradient-to-r from-[#111827] via-[#1f2937] to-[#111827] shadow-md">
+      <div className="flex space-x-8 text-sm md:text-base font-medium">
+        <Link to="/" className={navLinkClass("/")}>
+          Home
+        </Link>
+        <Link to="/dashboard" className={navLinkClass("/dashboard")}>
+          Dashboard
+        </Link>
+        <Link to="/profile" className={navLinkClass("/profile")}>
+          Profile
+        </Link>
+      </div>
 
-      <div className="ml-auto flex items-center space-x-4">
+      <div className="ml-auto flex items-center space-x-6">
         {!isLoggedIn ? (
           <>
-            <Link to="/login" className={navLinkClass("/login") + " flex items-center"}>
+            <Link to="/login" className={`flex items-center ${navLinkClass("/login")}`}>
               <FaSignInAlt className="mr-1" />
               Login
             </Link>
-            <Link to="/register" className={navLinkClass("/register") + " flex items-center"}>
+            <Link to="/register" className={`flex items-center ${navLinkClass("/register")}`}>
               <FaUserPlus className="mr-1" />
               Register
             </Link>
@@ -60,7 +62,7 @@ export default function Navbar() {
         ) : (
           <button
             onClick={handleLogout}
-            className="text-gray-700 hover:text-red-600 font-semibold cursor-pointer flex items-center"
+            className="text-gray-300 hover:text-red-400 font-semibold cursor-pointer flex items-center"
           >
             Logout
           </button>

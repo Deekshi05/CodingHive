@@ -5,7 +5,9 @@ import { connectClient } from "./config/mongodb_config.js";
 import { authroute } from "./routes/auth_router.js";
 import {getUserProfileStats} from "./controllers/profile_controller.js"
 import {getupcomingcontests} from "./controllers/dashboard_controller.js";
-// import { getCodeChefContests } from "./utils/platforms/codechef.js";
+import { getCodeChefContests } from "./utils/platforms/codechef.js";
+import { getCodeforcesContests } from "./utils/platforms/codeforces.js";
+import { getLeetCodeContests } from "./utils/platforms/leetcode.js";
 import {protect} from "./middleware/protect.js"
 import cookieParser from "cookie-parser";
 import cors from 'cors';
@@ -26,9 +28,9 @@ app.use(express.json());
 async function startServer() {
   try {
     await connectClient();
-    // await getCodeforcesContests();
-    // await getCodeChefContests();
-    // await getLeetCodeContests();
+    await getCodeforcesContests();
+    await getCodeChefContests();
+    await getLeetCodeContests();
     app.use("/", authroute);
     app.get("/profile", protect, getUserProfileStats);
     app.get("/dashboard", getupcomingcontests);
