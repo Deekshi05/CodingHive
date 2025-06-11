@@ -5,32 +5,39 @@ import { UpcomingContest } from "../models/upcomingContests.js";
 
 export const getupcomingcontests = async (req, res) => {
   try {
-    const now = new Date();
-    const oneDayMs = 24 * 60 * 60 * 1000;
+    const now = new Date(); // ❗ Added this
+    const oneDayMs = 24 * 60 * 60 * 1000; // ❗ Added this
+    const startOfToday = new Date();
+    startOfToday.setHours(0, 0, 0, 0); // 00:00:00.000 today
 
-    let contests = await UpcomingContest.find({ startTime: { $gt: now } })
+    let contests = await UpcomingContest.find({ startTime: { $gte: startOfToday } })
       .sort({ startTime: 1 })
       .limit(5);
 
     if (
       contests.length === 0 ||
       !contests[0].lastUpdated ||
-      now - contests[0].lastUpdated > oneDayMs
+      now - new Date(contests[0].lastUpdated) > oneDayMs
     ) {
+      console.log("Updating contests since data is stale or missing...");
+
+      // Fetch from platforms
       await getCodeChefContests();
       await getCodeforcesContests();
       await getLeetCodeContests();
 
-      contests = await UpcomingContest.find({ startTime: { $gt: now } })
+      // Re-query after update
+      contests = await UpcomingContest.find({ startTime: { $gte: startOfToday } })
         .sort({ startTime: 1 })
         .limit(5);
 
-      console.log("Fresh contests fetched");
+      console.log("✅ Fresh contests fetched");
     }
 
-    // Fetch all contests for calendar view or admin reference
+    // Fetch all contests (for calendar or admin)
     const allContests = await UpcomingContest.find().sort({ startTime: 1 });
 
+    // Format contest dates to ISO
     const formattedUpcoming = contests.map((contest) => ({
       ...contest._doc,
       startTime: new Date(contest.startTime).toISOString(),
@@ -46,7 +53,7 @@ export const getupcomingcontests = async (req, res) => {
       allContests: formattedAll,
     });
   } catch (err) {
-    console.error("Error fetching contests:", err.message);
+    console.error("❌ Error fetching contests:", err.message);
     return res.status(500).json({ error: "Internal server error" });
   }
 };

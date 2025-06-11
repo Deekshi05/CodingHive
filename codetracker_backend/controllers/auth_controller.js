@@ -1,6 +1,9 @@
 import {User} from "../models/users.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import { OAuth2Client } from "google-auth-library";
+
+const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 // Separate function for hashing password
 const hashPassword = async (password) => {
@@ -127,4 +130,53 @@ export const LogoutController = (req, res) => {
     secure: process.env.NODE_ENV === "production",
   });
   res.json({ message: "Logged out" });
+};
+
+export const GoogleLoginController = async (req, res) => {
+  const { token } = req.body;
+
+  try {
+    const ticket = await client.verifyIdToken({
+      idToken: token,
+      audience: process.env.GOOGLE_CLIENT_ID,
+    });
+
+    const payload = ticket.getPayload();
+    const { email, name, picture } = payload;
+
+    let user = await User.findOne({ email });
+
+    if (!user) {
+      // New user: Create with empty password (or random hashed one)
+      user = new User({
+        username: name,
+        email,
+        password: await hashPassword(Math.random().toString(36).slice(-8)), // dummy password
+        handles: {},
+      });
+
+      await user.save();
+    }
+
+    const tokenPayload = {
+      userId: user._id,
+      username: user.username,
+      email: user.email,
+    };
+
+    const accessToken = generateAccessToken(tokenPayload);
+    const refreshToken = generateRefreshToken(tokenPayload);
+
+    res.cookie("refreshToken", refreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "Strict",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+
+    res.status(200).json({ accessToken });
+  } catch (err) {
+    console.error("Google login error:", err);
+    res.status(401).json({ message: "Invalid Google token" });
+  }
 };

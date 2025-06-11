@@ -28,9 +28,9 @@ app.use(express.json());
 async function startServer() {
   try {
     await connectClient();
-    await getCodeforcesContests();
-    await getCodeChefContests();
-    await getLeetCodeContests();
+    // await getCodeforcesContests();
+    // await getCodeChefContests();
+    // await getLeetCodeContests();
     app.use("/", authroute);
     app.get("/profile", protect, getUserProfileStats);
     app.get("/dashboard", getupcomingcontests);
