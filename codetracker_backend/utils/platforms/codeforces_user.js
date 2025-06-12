@@ -1,40 +1,91 @@
 import axios from "axios";
-export const fetchProfile=async(username)=>{
+import { UserStats } from "../../models/userStats.js"; // adjust the path if needed
+
+const ONE_DAY_MS = 24 * 60 * 60 * 1000;
+
+export const getCodeforcesStats = async (userId, username) => {
   try {
-    
-    const userInfoRes = await axios.get(`https://codeforces.com/api/user.info?handles=${username}`);
-    if (userInfoRes.data.status !== "OK") throw new Error("API error fetching user info");
+    // Step 1: Check existing stats in DB
+    const existing = await UserStats.findOne({ userId, platform: "Codeforces" });
+
+    const now = new Date();
+    const isStale = !existing || (now - new Date(existing.lastFetched)) > ONE_DAY_MS;
+
+    if (!isStale) {
+      console.log("✅ Returning cached Codeforces data");
+      return existing;
+    }
+
+    // Step 2: Fetch fresh data from Codeforces
+    const [userInfoRes, submissionsRes] = await Promise.all([
+      axios.get(`https://codeforces.com/api/user.info?handles=${username}`),
+      axios.get(`https://codeforces.com/api/user.status?handle=${username}`)
+    ]);
+
+    if (userInfoRes.data.status !== "OK" || submissionsRes.data.status !== "OK") {
+      throw new Error("Codeforces API error");
+    }
+
     const user = userInfoRes.data.result[0];
-    
-    const submissionsRes = await axios.get(`https://codeforces.com/api/user.status?handle=${username}`);
-    if (submissionsRes.data.status !== "OK") throw new Error("API error fetching submissions");
-   
     const submissions = submissionsRes.data.result;
 
-    const solvedProblemsSet = new Set();
+    // Process submissions
+    const solvedSet = new Set();
+    const activeDays = new Set();
+    let correct = 0;
 
     submissions.forEach((submission) => {
+      const dateStr = new Date(submission.creationTimeSeconds * 1000).toISOString().split("T")[0];
+      activeDays.add(dateStr);
+
       if (submission.verdict === "OK") {
-       
-        const problemKey = `${submission.problem.contestId}-${submission.problem.index}`;
-        solvedProblemsSet.add(problemKey);
+        correct++;
+        const key = `${submission.problem.contestId}-${submission.problem.index}`;
+        solvedSet.add(key);
       }
     });
 
-    const problemsSolved = solvedProblemsSet.size;
+    const totalSubmissions = submissions.length;
+    const accuracy = totalSubmissions ? (correct / totalSubmissions) * 100 : 0;
 
-    const data= {
+    // Calculate streak
+    let streak = 0;
+    const current = new Date();
+
+    while (true) {
+      const dateStr = current.toISOString().split("T")[0];
+      if (activeDays.has(dateStr)) {
+        streak++;
+        current.setDate(current.getDate() - 1);
+      } else {
+        break;
+      }
+    }
+
+    // Prepare the stats object
+    const stats = {
+      userId,
       platform: "Codeforces",
-      username: username,
-      rating: user.rating ? parseInt(user.rating) : null,
-      problemsSolved,
+      currentRating: user.rating || null,
+      highestRating: user.maxRating || null,
+      problemsSolved: solvedSet.size,
+      accuracy: parseFloat(accuracy.toFixed(2)),
+      streak,
+      lastFetched: new Date()
     };
-    return data;
+
+    // Step 3: Update or insert in database
+    const updated = await UserStats.findOneAndUpdate(
+      { userId, platform: "Codeforces" },
+      stats,
+      { upsert: true, new: true }
+    );
+
+    console.log("📦 Updated Codeforces stats from API");
+    return updated;
+
   } catch (error) {
-  console.error("❌ Codeforces fetch error:", error);
-  return {
-    platform: "Codeforces",
-    error: error?.message || "Unknown error",
-  };
-}
-}
+    console.error("❌ Error in getCodeforcesStats:", error.message);
+    throw error;
+  }
+};

@@ -4,9 +4,11 @@ const userStatsSchema = new mongoose.Schema({
   userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
   platform: { type: String, required: true },
 
-  rating: { type: Number },
+  currentRating: { type: Number },
+  highestRating:{type:Number},
   problemsSolved: { type: Number },
   accuracy: { type: Number },
+  streak:{ type: Number},
   lastFetched: { type: Date, default: Date.now }
 });
 

@@ -45,6 +45,9 @@ export default function Navbar() {
         <Link to="/profile" className={navLinkClass("/profile")}>
           Profile
         </Link>
+         <Link to="/past-contests" className={navLinkClass("/past-contests")}>
+          PastContests
+        </Link>
       </div>
 
       <div className="ml-auto flex items-center space-x-6">
