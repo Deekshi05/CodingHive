@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import ContestCard from "../components/ContestCard.jsx";
 import ContestCalendar from "../components/ContestCalender.jsx";
-
+import Potdcomponent from "../components/Potdcomponent.jsx";
 export default function UpcomingContests() {
   const [allContests, setAllContests] = useState([]);
   const [upcomingContests, setUpcomingContests] = useState([]);
@@ -57,6 +57,10 @@ export default function UpcomingContests() {
         {upcomingContests.map((contest) => (
           <ContestCard key={contest._id} contest={contest} />
         ))}
+      </div>
+      <div>
+        <h2>POTD</h2>
+        <Potdcomponent/>
       </div>
     </div>
   );
