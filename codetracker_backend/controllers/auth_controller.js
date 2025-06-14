@@ -63,7 +63,6 @@ export const RegisterController = async (req, res) => {
       sameSite: "Strict",
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     });
-
     res.status(201).json({ accessToken });
   } catch (error) {
     console.error("Registration error:", error);

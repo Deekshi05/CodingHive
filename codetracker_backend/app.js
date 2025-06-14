@@ -1,16 +1,11 @@
 import express from "express";
-import dns from 'dns';
-dns.setDefaultResultOrder('ipv4first');
 import { connectClient } from "./config/mongodb_config.js";
 import { authroute } from "./routes/auth_router.js";
-import {getUserProfileStats} from "./controllers/profile_controller.js"
 import {fetchYoutubeDiscussions} from "./controllers/contestDiscussioncontroller.js";
 import {getupcomingcontests} from "./controllers/dashboard_controller.js";
-import { getCodeChefContests } from "./utils/platforms/codechef.js";
-import { getCodeforcesContests } from "./utils/platforms/codeforces.js";
-import { getLeetCodeContests } from "./utils/platforms/leetcode.js";
-import {protect} from "./middleware/protect.js"
-import { ContestDiscussion } from "./models/contestDiscussion.js";
+import { getCodechefStats } from "./utils/platforms/codechef_profile.js";
+import { getCodeforcesStats } from "./utils/platforms/codeforces_profile.js";
+import { LogoutController } from "./controllers/auth_controller.js";
 import cookieParser from "cookie-parser";
 import cors from 'cors';
 import dotenv from "dotenv";
@@ -34,9 +29,11 @@ async function startServer() {
     // await getCodeChefContests();
     // await getLeetCodeContests();
     app.use("/", authroute);
-    app.get("/profile", protect, getUserProfileStats);
     app.get("/dashboard", getupcomingcontests);
     app.get("/past-contests",fetchYoutubeDiscussions);
+    app.get("/logout",LogoutController);
+    app.get("/stats/codeforces/:userId", getCodeforcesStats);
+    app.get("/stats/codechef/:userId", getCodechefStats);
     app.listen(PORT, () => {
       console.log(`server running on http://localhost:${PORT}`);
     });

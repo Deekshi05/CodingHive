@@ -1,16 +1,26 @@
 import axios from "axios";
-import { UserStats } from "../models/UserStats.js"; // Adjust path if needed
+import { UserStats } from "../../models/userStats.js";
+import { User } from "../../models/users.js";
 
-export const fetchCodechefProfile = async (userId, username) => {
+export const getCodechefStats = async (req, res) => {
   try {
+    const userId = req.params.userId;
     const platform = "CodeChef";
     const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
+
+    // Get username from Users collection
+    const user = await User.findById(userId);
+    if (!user || !user.handles || !user.handles.get("codechef")) {
+      return res.status(404).json({ error: "CodeChef username not found for this user." });
+    }
+
+    const username = user.handles.get("codechef");
 
     // Check if existing stats are fresh
     let stats = await UserStats.findOne({ userId, platform });
     if (stats && stats.lastFetched > oneDayAgo) {
       console.log("✅ Returning cached CodeChef stats");
-      return stats;
+      return res.json(stats);
     }
 
     // Fetch fresh data from CodeChef unofficial API
@@ -22,10 +32,8 @@ export const fetchCodechefProfile = async (userId, username) => {
     const highestRating = data.highestRating;
 
     // Calculate total submissions & activity dates
-    const today = new Date().toISOString().split('T')[0];
     const activityDates = new Set();
     let totalSubmissions = 0;
-
     data.heatMap.forEach(entry => {
       if (entry.value > 0) {
         activityDates.add(entry.date);
@@ -33,7 +41,7 @@ export const fetchCodechefProfile = async (userId, username) => {
       }
     });
 
-    // Streak calculation
+    // Calculate streak
     let streak = 0;
     const currentDate = new Date();
     while (true) {
@@ -46,36 +54,28 @@ export const fetchCodechefProfile = async (userId, username) => {
       }
     }
 
-    // No accuracy field in API
-    const accuracy = null;
-
     const newData = {
       userId,
       platform,
       currentRating,
       highestRating,
       problemsSolved: totalSubmissions,
-      accuracy,
+      accuracy: null,
       streak,
       lastFetched: new Date(),
     };
 
     if (stats) {
-      // Update if exists
       await UserStats.updateOne({ userId, platform }, newData);
     } else {
-      // Insert new if doesn't exist
       stats = new UserStats(newData);
       await stats.save();
     }
-
+     console.log(newData);
     console.log("🔄 CodeChef stats updated from API");
-    return newData;
+    return res.json(newData);
   } catch (error) {
     console.error("❌ CodeChef fetch error:", error.message);
-    return {
-      platform: "CodeChef",
-      error: error.message || "Unknown error",
-    };
+    return res.status(500).json({ error: "Failed to fetch CodeChef stats." });
   }
 };

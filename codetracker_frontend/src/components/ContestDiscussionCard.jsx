@@ -1,4 +1,3 @@
-// components/ContestDiscussionCard.jsx
 import React from "react";
 
 const ContestDiscussionCard = ({ contest }) => {
@@ -8,14 +7,20 @@ const ContestDiscussionCard = ({ contest }) => {
   });
 
   return (
-    <div className="bg-white shadow-md rounded-2xl p-4 mb-4 border border-gray-200">
-      <h2 className="text-xl font-semibold text-gray-800">{contest.name}</h2>
-      <p className="text-sm text-gray-500 mb-3">
-        Platform: <span className="font-medium">{contest.platform}</span> | Date: {formattedDate}
+    <div className="max-w-md w-full mx-auto bg-[#0F172A] border border-blue-800 rounded-xl p-5 mb-4 shadow-md text-white font-mono transition hover:border-blue-400">
+      {/* Contest Title */}
+      <h2 className="text-lg font-semibold text-white mb-1">{contest.name}</h2>
+
+      {/* Platform + Date */}
+      <p className="text-sm text-slate-400 mb-3">
+        Platform:{" "}
+        <span className="font-semibold text-blue-400">{contest.platform}</span> | Date:{" "}
+        <span className="text-slate-300">{formattedDate}</span>
       </p>
 
+      {/* YouTube Links */}
       <div>
-        <h3 className="text-sm font-medium text-gray-700 mb-2">Discussion Videos:</h3>
+        <h3 className="text-sm font-semibold text-slate-300 mb-2">Discussion Videos:</h3>
         {contest.youtubeLinks && contest.youtubeLinks.length > 0 ? (
           contest.youtubeLinks.map((url, index) => (
             <a
@@ -23,13 +28,13 @@ const ContestDiscussionCard = ({ contest }) => {
               href={url}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-blue-600 hover:text-blue-800 underline block text-sm mb-1"
+              className="text-blue-400 hover:text-blue-300 underline block text-sm mb-1 transition"
             >
               🎥 YouTube Link {index + 1}
             </a>
           ))
         ) : (
-          <p className="text-gray-400 text-sm italic">No discussion links available.</p>
+          <p className="text-slate-500 italic text-sm">No discussion links available.</p>
         )}
       </div>
     </div>

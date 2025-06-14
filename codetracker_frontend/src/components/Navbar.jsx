@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { FaSignInAlt, FaUserPlus } from "react-icons/fa";
-import axios from "axios";
+import { FaSignInAlt, FaUserPlus, FaSignOutAlt } from "react-icons/fa";
+import axiosClient from "../axiosclient";
 
 export default function Navbar() {
   const location = useLocation();
@@ -9,65 +9,65 @@ export default function Navbar() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
-    const token = localStorage.getItem("accessToken");
-    setIsLoggedIn(!!token);
+    setIsLoggedIn(!!localStorage.getItem("accessToken"));
   }, [location]);
 
   const navLinkClass = (path) =>
-    location.pathname === path
-      ? "text-green-400 font-semibold"
-      : "text-gray-300 hover:text-green-300";
+    `px-4 py-2 rounded-lg text-base font-medium tracking-wide transition-all duration-200 ${
+      location.pathname === path
+        ? "text-blue-400 bg-white/10 shadow-inner"
+        : "text-white hover:text-blue-300 hover:bg-white/5"
+    }`;
 
   const handleLogout = async () => {
     try {
-      await axios.post(
-        "http://localhost:5000/logout",
-        {},
-        { withCredentials: true }
-      );
+      await axiosClient.post("/logout", {}, { withCredentials: true });
       localStorage.removeItem("accessToken");
       setIsLoggedIn(false);
       navigate("/login");
-    } catch (err) {
-      console.error("Logout failed:", err);
+    } catch (e) {
+      console.error(e);
     }
   };
 
   return (
-    <nav className="flex items-center px-6 py-4 bg-gradient-to-r from-[#111827] via-[#1f2937] to-[#111827] shadow-md">
-      <div className="flex space-x-8 text-sm md:text-base font-medium">
-        <Link to="/" className={navLinkClass("/")}>
-          Home
-        </Link>
-        <Link to="/dashboard" className={navLinkClass("/dashboard")}>
-          Dashboard
-        </Link>
-        <Link to="/profile" className={navLinkClass("/profile")}>
-          Profile
-        </Link>
-         <Link to="/past-contests" className={navLinkClass("/past-contests")}>
-          PastContests
-        </Link>
+    <nav className="w-full px-6 py-4 bg-[#0e1b30] border border-white/10 rounded-xl shadow-md flex items-center justify-between font-mono text-white text-base">
+      <div className="text-2xl font-extrabold tracking-widest">
+        Coding Hive
       </div>
 
-      <div className="ml-auto flex items-center space-x-6">
+      <div className="flex space-x-4">
+        <Link to="/" className={navLinkClass("/")}>Home</Link>
+        <Link to="/dashboard" className={navLinkClass("/dashboard")}>Dashboard</Link>
+        <Link to="/profile" className={navLinkClass("/profile")}>Profile</Link>
+        <Link to="/past-contests" className={navLinkClass("/past-contests")}>ContestDiscussions</Link>
+      </div>
+
+      <div className="flex space-x-3">
         {!isLoggedIn ? (
           <>
-            <Link to="/login" className={`flex items-center ${navLinkClass("/login")}`}>
-              <FaSignInAlt className="mr-1" />
-              Login
+            <Link
+              to="/login"
+              className="flex items-center gap-2 px-3 py-2 rounded-md text-white hover:text-blue-400 hover:bg-white/5 transition-all text-base"
+            >
+              <FaSignInAlt />
+              <span>Login</span>
             </Link>
-            <Link to="/register" className={`flex items-center ${navLinkClass("/register")}`}>
-              <FaUserPlus className="mr-1" />
-              Register
+            <Link
+              to="/register"
+              className="flex items-center gap-2 px-3 py-2 rounded-md text-white hover:text-blue-400 hover:bg-white/5 transition-all text-base"
+            >
+              <FaUserPlus />
+              <span>Register</span>
             </Link>
           </>
         ) : (
           <button
             onClick={handleLogout}
-            className="text-gray-300 hover:text-red-400 font-semibold cursor-pointer flex items-center"
+            className="flex items-center gap-2 px-3 py-2 rounded-md text-white hover:text-red-400 hover:bg-white/5 transition-all text-base"
           >
-            Logout
+            <FaSignOutAlt />
+            <span>Logout</span>
           </button>
         )}
       </div>

@@ -9,12 +9,14 @@ export const fetchYoutubeDiscussions = async (req, res) => {
     const now = new Date();
     const firstOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
 
-    const pastContests = await UpcomingContest.find({
-      startTime: { $gte: firstOfMonth, $lt: now },
+    // Fetch all contests in the current month
+    const contestsThisMonth = await UpcomingContest.find({
+      startTime: { $gte: firstOfMonth, $lte: now },
     });
 
-    const contestIds = pastContests.map((contest) => contest._id.toString());
+    const contestIds = contestsThisMonth.map(contest => contest._id.toString());
 
+    // Fetch existing discussions
     const existingDiscussions = await ContestDiscussion.find({
       contestId: { $in: contestIds },
     });
@@ -24,60 +26,97 @@ export const fetchYoutubeDiscussions = async (req, res) => {
       discussedMap.set(doc.contestId.toString(), doc.youtubeLinks);
     }
 
-    const missingContests = pastContests.filter(
-      (contest) => !discussedMap.has(contest._id.toString())
-    );
-
-    for (const contest of missingContests) {
+    for (const contest of contestsThisMonth) {
+      const contestId = contest._id.toString();
       const platform = contest.platform.trim();
       const contestName = contest.contestName.trim();
       const year = contest.startTime.getFullYear();
 
-      const searchQuery = `${platform} ${contestName} ${year}`;
+      const existingLinks = discussedMap.get(contestId) || [];
+      const shouldFetch = contest.startTime < now && existingLinks.length < 3;
 
-      try {
-        const searchResponse = await axios.get("https://www.googleapis.com/youtube/v3/search", {
-          params: {
-            key: YOUTUBE_API_KEY,
-            q: searchQuery,
-            part: "snippet",
-            type: "video",
-            maxResults: 3,
-            safeSearch: "strict",
-          },
-        });
+      if (shouldFetch) {
+        try {
+          // Extract contest number (e.g., "Starters 190" => "190")
+          const numberMatch = contestName.match(/\d+/);
+          const contestNumber = numberMatch ? numberMatch[0] : "";
 
-        const topVideos = searchResponse.data.items.filter(item => item.id.kind === "youtube#video");
+          // Tighter query using platform and number if available
+          const searchQuery = contestNumber
+            ? `${platform} ${contestNumber}`
+            : `${platform} ${contestName}`;
 
-        const youtubeLinks = topVideos.map(
-          (item) => `https://www.youtube.com/watch?v=${item.id.videoId}`
-        );
-
-        if (youtubeLinks.length > 0) {
-          await ContestDiscussion.create({
-            contestId: contest._id,
-            youtubeLinks,
-            lastFetched: new Date(),
+          const searchResponse = await axios.get("https://www.googleapis.com/youtube/v3/search", {
+            params: {
+              key: YOUTUBE_API_KEY,
+              q: searchQuery,
+              part: "snippet",
+              type: "video",
+              maxResults: 10,
+              videoEmbeddable: "true",
+              safeSearch: "strict",
+              order: "relevance",
+            },
           });
 
-          discussedMap.set(contest._id.toString(), youtubeLinks);
+          const videos = searchResponse.data.items.filter(
+            item => item.id.kind === "youtube#video"
+          );
+
+          const keyword = contestName.toLowerCase();
+
+          // Filter videos relevant to contest title
+          let matchedVideos = videos.filter(video =>
+            video.snippet.title.toLowerCase().includes(keyword)
+          );
+
+          // Fallback: if no videos match title, allow number-based match
+          if (matchedVideos.length === 0 && contestNumber) {
+            matchedVideos = videos.filter(video =>
+              video.snippet.title.toLowerCase().includes(contestNumber)
+            );
+          }
+
+          const youtubeLinks = matchedVideos
+            .map(video => `https://www.youtube.com/watch?v=${video.id.videoId}`)
+            .slice(0, 3);
+
+          if (youtubeLinks.length > 0) {
+            if (discussedMap.has(contestId)) {
+              await ContestDiscussion.updateOne(
+                { contestId: contest._id },
+                {
+                  $set: {
+                    youtubeLinks,
+                    lastFetched: new Date(),
+                  },
+                }
+              );
+            } else {
+              await ContestDiscussion.create({
+                contestId: contest._id,
+                youtubeLinks,
+                lastFetched: new Date(),
+              });
+            }
+
+            discussedMap.set(contestId, youtubeLinks);
+          }
+        } catch (err) {
+          console.error(`❌ YouTube fetch error for "${contest.contestName}":`, err.response?.data || err.message);
         }
-      } catch (err) {
-        console.error(`❌ YouTube fetch error for "${contest.contestName}":`, err.message);
       }
     }
 
-    const result = pastContests.map((contest) => ({
+    const result = contestsThisMonth.map(contest => ({
       name: contest.contestName,
       platform: contest.platform,
       startTime: contest.startTime,
       youtubeLinks: (discussedMap.get(contest._id.toString()) || []).slice(0, 3),
     }));
 
-    // console.log(result);
-
     return res.json({
-      message: "Top 3 YouTube results per contest (exact order from YouTube)",
+      message: "YouTube discussion links for contests in the current month",
       data: result,
     });
 

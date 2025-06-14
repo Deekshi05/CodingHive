@@ -8,14 +8,14 @@ import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
 import duration from "dayjs/plugin/duration";
 
-// Extend plugins
 dayjs.extend(utc);
 dayjs.extend(timezone);
 dayjs.extend(duration);
 
 const ContestCard = ({ contest }) => {
- let parsedStartTime = dayjs.utc(contest.startTime).tz("Asia/Kolkata")
-parsedStartTime = parsedStartTime.add(5, 'hour').add(30, 'minute');       // Add +5:30 again
+  let parsedStartTime = dayjs.utc(contest.startTime).tz("Asia/Kolkata");
+  parsedStartTime = parsedStartTime.add(5, "hour").add(30, "minute");
+
   const [timeRemaining, setTimeRemaining] = useState("");
 
   useEffect(() => {
@@ -50,28 +50,29 @@ parsedStartTime = parsedStartTime.add(5, 'hour').add(30, 'minute');       // Add
   const logo = platformLogos[contest.platform] || "";
 
   return (
-    <div className="flex items-center justify-between bg-gradient-to-r from-[#111827] via-[#1f2937] to-[#111827] text-white px-6 py-5 rounded-xl shadow-md hover:shadow-2xl hover:ring-2 hover:ring-green-400 transition-all duration-300 mb-5">
-      <div className="w-10 h-10 flex-shrink-0 mr-6 bg-gray-800 rounded-lg flex items-center justify-center">
+    <div className="bg-[#0F172A] border border-blue-800 rounded-xl p-5 mb-4 shadow-md flex justify-between items-center text-white font-mono transition hover:border-blue-400">
+      {/* Platform Icon */}
+      <div className="w-12 h-12 mr-5 flex items-center justify-center rounded-lg bg-blue-900/40">
         {logo ? (
-          <img src={logo} alt={`${contest.platform} logo`} className="w-8 h-8 object-contain" />
+          <img src={logo} alt={`${contest.platform} logo`} className="w-7 h-7 object-contain" />
         ) : (
-          <div className="text-xs text-gray-400">No Logo</div>
+          <div className="text-xs text-slate-400">No Logo</div>
         )}
       </div>
 
+      {/* Contest Info */}
       <div className="flex-1 min-w-0">
-        <h2 className="text-xl font-semibold truncate">{contest.contestName}</h2>
-        <p className="text-sm text-gray-400 mt-1">
-          {parsedStartTime.format("D MMM YYYY, h:mm A [IST]")}
+        <h2 className="text-lg font-semibold truncate">{contest.contestName}</h2>
+        <p className="text-sm text-slate-400 mt-0.5">
+          {parsedStartTime.format("D MMM, h:mm A")} IST
         </p>
-        <p className="text-xs text-gray-500 mt-1">
-          Duration: {contest.duration} mins
-        </p>
+        <p className="text-sm text-slate-500">Duration: {contest.duration} mins</p>
       </div>
 
-      <div className="flex flex-col items-end ml-6 space-y-2 min-w-[110px]">
+      {/* Countdown + Register */}
+      <div className="flex flex-col items-end space-y-2 ml-4 min-w-[110px]">
         {timeRemaining && (
-          <div className="flex items-center bg-green-700 bg-opacity-30 text-green-300 text-sm px-3 py-1 rounded-full font-medium">
+          <div className="flex items-center bg-blue-900 text-blue-300 text-sm px-3 py-1 rounded-full">
             <FiClock className="mr-2" />
             <span>{timeRemaining}</span>
           </div>
@@ -80,7 +81,7 @@ parsedStartTime = parsedStartTime.add(5, 'hour').add(30, 'minute');       // Add
           href={contest.contestLink}
           target="_blank"
           rel="noopener noreferrer"
-          className="bg-green-600 hover:bg-green-700 shadow-md hover:shadow-lg transition rounded-md px-5 py-2 font-semibold text-sm whitespace-nowrap text-white"
+          className="text-sm font-semibold px-4 py-1.5 rounded-md bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 transition text-white shadow"
         >
           Register
         </a>
