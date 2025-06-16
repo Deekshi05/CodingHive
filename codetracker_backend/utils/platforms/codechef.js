@@ -1,5 +1,6 @@
 import axios from "axios";
 import { UpcomingContest } from "../../models/upcomingContests.js";
+import { get } from "mongoose";
 
 const API_USERNAME = "Deekshu@04";
 const API_KEY = "5f077a631060729e5789b49b4bed4df99ba8281f";
@@ -22,7 +23,7 @@ export const getCodeChefContests = async () => {
         start__gte: monthStart,
         start__lt: monthEnd,
         order_by: "start",
-        limit: 100, // Fetch enough contests for the whole month
+        limit: 50, // Fetch enough contests for the whole month
       },
     });
 

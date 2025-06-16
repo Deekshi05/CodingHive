@@ -1,53 +1,23 @@
-import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
-import { FaThumbtack } from "react-icons/fa";
-import axios from "axios";
+import React from "react";
 
-const Potdcomponent = () => {
-  const [potdLink, setPotdLink] = useState("");
-
-  useEffect(() => {
-    const fetchPOTD = async () => {
-      try {
-        const response = await axios.get("https://leetcode-api-pied.vercel.app/daily");
-        const data = response.data;
-        const fullUrl = `https://leetcode.com${data.link}`;
-        setPotdLink(fullUrl);
-      } catch (error) {
-        console.error("Error fetching POTD:", error.message);
-      }
-    };
-    fetchPOTD();
-  }, []);
-
+export default function Potdcomponent({ title, link }) {
   return (
-    <motion.div
-      className="rounded-2xl w-full max-w-sm mx-auto px-6 py-4 bg-[#1e253b]/80 backdrop-blur-lg shadow-xl border border-[#2b324b] mt-6"
-      initial={{ opacity: 0, y: 30 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
-    >
-      <div className="flex items-center gap-2 mb-2">
-        <FaThumbtack className="text-pink-500" />
-        <h2 className="text-base sm:text-lg font-semibold text-white">
-          LeetCode Problem of the Day
-        </h2>
-      </div>
-
-      {potdLink ? (
+    <div className="bg-gray-900 rounded-xl p-6 h-full flex flex-col justify-between">
+      <h3 className="text-xl font-bold mb-4 text-white uppercase tracking-wide">
+        {title}
+      </h3>
+      {link ? (
         <a
-          href={potdLink}
+          href={link}
           target="_blank"
           rel="noopener noreferrer"
-          className="text-sm text-blue-400 hover:underline hover:text-blue-300 transition"
+          className="text-blue-400 hover:text-blue-300 underline text-base"
         >
-          View on LeetCode →
+          🔗 {title} →
         </a>
       ) : (
-        <p className="text-sm text-gray-400 italic">Loading...</p>
+        <p className="text-gray-400 italic">Loading...</p>
       )}
-    </motion.div>
+    </div>
   );
-};
-
-export default Potdcomponent;
+}

@@ -19,6 +19,7 @@ const getUserIdFromToken = () => {
 const Profile = () => {
   const [codeforces, setCodeforces] = useState(null);
   const [codechef, setCodechef] = useState(null);
+  const [leetcode, setLeetcode] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -31,12 +32,14 @@ const Profile = () => {
 
     const fetchStats = async () => {
       try {
-        const [cfRes, ccRes] = await Promise.all([
+        const [cfRes, ccRes, lcRes] = await Promise.all([
           axiosClient.get(`/stats/codeforces/${userId}`),
-          axiosClient.get(`/stats/codechef/${userId}`)
+          axiosClient.get(`/stats/codechef/${userId}`),
+          axiosClient.get(`/stats/leetcode/${userId}`)
         ]);
         setCodeforces(cfRes.data);
         setCodechef(ccRes.data);
+        setLeetcode(lcRes.data);
       } catch (err) {
         console.error("Error fetching stats", err);
       } finally {
@@ -50,7 +53,7 @@ const Profile = () => {
   if (loading)
     return <p className="text-center text-gray-400 mt-10">Loading...</p>;
 
-  if (!codeforces || !codechef)
+  if (!codeforces || !codechef || !leetcode)
     return <p className="text-center text-red-500 mt-10">Stats not available</p>;
 
   return (
@@ -83,6 +86,15 @@ const Profile = () => {
                 </div>
                 <p className="text-sm text-gray-400 mt-1">Max: {codechef.highestRating}</p>
               </div>
+
+              {/* LeetCode */}
+              <div>
+                <p className="mb-1">LeetCode: <span className="text-blue-300 font-medium">{leetcode.currentRating || "N/A"}</span></p>
+                <div className="h-2 w-full bg-gray-700 rounded">
+                  <div className="h-2 rounded bg-gradient-to-r from-blue-400 to-blue-600" style={{ width: `${(leetcode.currentRating / 3000) * 100}%` }}></div>
+                </div>
+                <p className="text-sm text-gray-400 mt-1">Max: {leetcode.highestRating || "N/A"}</p>
+              </div>
             </div>
           </div>
 
@@ -95,16 +107,25 @@ const Profile = () => {
             <div className="space-y-4">
               <p>
                 <span className="font-medium text-gray-300">Total Solved:</span>{" "}
-                {codeforces.problemsSolved + codechef.problemsSolved}
+                {codeforces.problemsSolved + codechef.problemsSolved + leetcode.problemsSolved}
               </p>
               <p>
                 <span className="font-medium text-gray-300">Accuracy:</span>{" "}
-                {((codeforces.accuracy + codechef.accuracy) / 2).toFixed(2)}%
+                {
+                  (
+                    (
+                      (codeforces.accuracy || 0) +
+                      (codechef.accuracy || 0)
+                    ) / 2
+                  ).toFixed(2)
+                }%
+                <span className="text-sm text-gray-500 ml-2">(LeetCode accuracy unavailable)</span>
               </p>
               <p>
                 <span className="font-medium text-gray-300">Streak:</span>{" "}
                 <span className="text-green-400">CF: {codeforces.streak}</span>,{" "}
-                <span className="text-yellow-400">CC: {codechef.streak}</span>
+                <span className="text-yellow-400">CC: {codechef.streak}</span>,{" "}
+                <span className="text-pink-400">LC: {leetcode.streak}</span>
               </p>
             </div>
           </div>
