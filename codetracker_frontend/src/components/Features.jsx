@@ -1,23 +1,25 @@
 import React from "react";
-
+import utube from "../assets/utube.jpeg";
+import stats from "../assets/stats.jpeg";
+import calender from "../assets/calender.jpeg";
 const features = [
   {
     title: "Contest Calendar",
     description:
       "Our Contest Calendar feature keeps you updated on upcoming coding competitions across various platforms. Whether you're looking for a quick challenge or a major contest, we ensure you never miss an opportunity to showcase your skills.",
-    image: "/images/calendar.png",
+    image: calender,
   },
   {
     title: "User Stats",
     description:
       "With our User Stats feature, track your coding performance over time. Gain insights into your strengths and areas for improvement, helping you to refine your skills and achieve your goals.",
-    image: "/images/stats.png",
+    image: stats,
   },
   {
     title: "Post-Contest Discussions",
     description:
-      "Engage with our Post-Contest Discussions, where you can share insights and strategies with fellow coders. This collaborative space allows for shared learning and growth, enhancing your coding experience.",
-    image: "/images/discussion.png",
+      "Watch curated YouTube videos of completed contests, including editorials and walkthroughs from top coders. These resources help you understand problem-solving strategies and improve through real contest insights.",
+    image: utube,
   },
 ];
 
@@ -29,7 +31,8 @@ export default function Features() {
           Features of our coding platform
         </h2>
         <p className="text-slate-400 max-w-3xl mx-auto">
-          From tracking contests to analyzing performance metrics, we work diligently to provide features that enhance your coding journey.
+          From tracking contests to analyzing performance metrics, we work
+          diligently to provide features that enhance your coding journey.
         </p>
       </div>
 

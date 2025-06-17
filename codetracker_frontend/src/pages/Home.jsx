@@ -2,14 +2,13 @@ import React from "react";
 import { Link } from "react-router-dom";
 import Hero from "../components/Hero";
 import Features from "../components/Features";
+import Reviews from "../components/Reviews"; // ✅ Import Reviews component
 
 export default function Home() {
   return (
     <div className="min-h-screen bg-[#0f172a] text-white">
       {/* Hero Section */}
-      <section className="container mx-auto px-6 py-20 text-center">
-        <Hero />
-      </section>
+      <Hero />
 
       {/* Features Section */}
       <section>
@@ -68,6 +67,9 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* Reviews Section */}
+      <Reviews /> {/* ✅ Added here */}
 
       {/* Footer */}
       <footer className="py-10 bg-[#111827] border-t border-white/10 text-center">

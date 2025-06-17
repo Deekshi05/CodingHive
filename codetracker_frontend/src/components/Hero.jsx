@@ -1,13 +1,14 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import heroimg from "../assets/hero.png";
 
 export default function Hero() {
   return (
-    <section className="bg-[#111827] text-white min-h-screen flex items-center">
+    <section className="bg-[#111827] text-white min-h-screen flex items-center overflow-hidden">
       <div className="container mx-auto px-6 md:px-12 flex flex-col md:flex-row items-center justify-between">
         
         {/* Left Text Content */}
-        <div className="max-w-xl text-center md:text-left">
+        <div className="max-w-xl text-center md:text-left z-10">
           <h1 className="text-4xl md:text-5xl font-extrabold leading-tight mb-6 text-white">
             Welcome to <span className="text-blue-300">Coding Hive</span>
           </h1>
@@ -31,11 +32,11 @@ export default function Hero() {
         </div>
 
         {/* Right Image */}
-        <div className="mt-12 md:mt-0">
+        <div className="w-full md:w-1/2 mt-12 md:mt-0">
           <img
-            src="https://cdn.dribbble.com/users/1162077/screenshots/3848914/programmer.png"
+            src={heroimg}
             alt="Hero Illustration"
-            className="w-[360px] md:w-[400px] mx-auto md:mx-0 drop-shadow-lg"
+            className="w-full h-auto object-cover max-h-[90vh] mx-auto"
           />
         </div>
       </div>
