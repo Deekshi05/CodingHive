@@ -1,18 +1,20 @@
 import React, { useState } from "react";
 import axiosClient from "../axiosclient.js";
 import { HiMail } from "react-icons/hi";
-import { FaLink } from "react-icons/fa";
 
 export default function ForgotPassword() {
   const [email, setEmail] = useState("");
-  const [link, setLink] = useState(null);
+  const [message, setMessage] = useState(null);
+  const [error, setError] = useState(null);
 
   const handleSubmit = async () => {
     try {
       const res = await axiosClient.post("/forgot-password", { email });
-      setLink(res.data.resetLink);
+      setMessage(res.data.message);
+      setError(null);
     } catch (err) {
-      alert("User not found");
+      setMessage(null);
+      setError("User not found");
     }
   };
 
@@ -29,6 +31,7 @@ export default function ForgotPassword() {
             type="email"
             placeholder="Enter your email"
             className="w-full bg-transparent focus:outline-none text-sm text-gray-800 placeholder-blue-400"
+            value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
         </div>
@@ -40,19 +43,15 @@ export default function ForgotPassword() {
           Request Reset Link
         </button>
 
-        {link && (
-          <div className="mt-6 bg-green-100 p-4 rounded-lg text-sm break-words border border-green-300 text-gray-800">
-            <p className="font-medium flex items-center text-green-700 mb-1">
-              <FaLink className="mr-2" /> Reset Link (for testing):
-            </p>
-            <a
-              href={link}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-blue-600 underline break-all hover:text-blue-800"
-            >
-              {link}
-            </a>
+        {message && (
+          <div className="mt-4 text-green-700 bg-green-100 p-3 rounded-lg border border-green-300 text-sm">
+            {message}
+          </div>
+        )}
+
+        {error && (
+          <div className="mt-4 text-red-700 bg-red-100 p-3 rounded-lg border border-red-300 text-sm">
+            {error}
           </div>
         )}
       </div>

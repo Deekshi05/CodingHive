@@ -23,12 +23,12 @@ const features = [
 
 export default function Features() {
   return (
-    <section className="bg-[#0F172A] text-white py-16 px-6 md:px-12">
+    <section className="bg-[#0f172a] text-white py-16 px-6 md:px-12">
       <div className="text-center mb-12">
         <h2 className="text-4xl md:text-5xl font-bold text-blue-400 mb-4">
           Features of our coding platform
         </h2>
-        <p className="text-slate-300 max-w-3xl mx-auto">
+        <p className="text-slate-400 max-w-3xl mx-auto">
           From tracking contests to analyzing performance metrics, we work diligently to provide features that enhance your coding journey.
         </p>
       </div>
@@ -37,18 +37,20 @@ export default function Features() {
         {features.map((feature, index) => (
           <div
             key={index}
-            className="bg-[#1E293B] rounded-xl shadow-lg overflow-hidden hover:shadow-blue-400/40 transition"
+            className="bg-[#111827] border border-white/10 rounded-2xl shadow-xl transition-transform transform hover:-translate-y-1 hover:shadow-blue-500/30 w-full"
           >
             <img
               src={feature.image}
               alt={feature.title}
-              className="w-full h-56 object-cover"
+              className="w-full h-56 object-cover rounded-t-2xl"
             />
-            <div className="p-6 space-y-4">
+            <div className="p-6 space-y-3">
               <h3 className="text-xl font-semibold text-blue-300">
                 {feature.title}
               </h3>
-              <p className="text-slate-300 text-sm">{feature.description}</p>
+              <p className="text-slate-400 text-sm leading-relaxed">
+                {feature.description}
+              </p>
             </div>
           </div>
         ))}

@@ -1,19 +1,25 @@
 import {User} from "../../models/users.js";
 import crypto from "crypto";
+import { sendResetPasswordEmail } from "../../utils/sendResetPasswordEmail.js";
+import {hashPassword} from "./auth_controller.js";
 
-export const forgotpassword=async(req,res)=>{
+export const forgotpassword = async (req, res) => {
   const { email } = req.body;
+
   const user = await User.findOne({ email });
   if (!user) return res.status(404).json({ message: "User not found" });
-  console.log(email);
-  const token = crypto.randomBytes(32).toString("hex");
-  user.resetToken = token;
-  user.resetTokenExpiry = Date.now() + 3600000; 
+
+  const resetToken = crypto.randomBytes(32).toString("hex");
+  const expiry = Date.now() + 1000 * 60 * 60; // 1 hour
+
+  user.resetToken = resetToken;
+  user.resetTokenExpiry = expiry;
   await user.save();
 
-  const resetLink = `http://localhost:5173/reset-password/${token}`;
-  res.json({ resetLink });
-}
+  await sendResetPasswordEmail(email, resetToken);
+
+  res.json({ message: "Reset email sent successfully" });
+};
 
 export const resetpassword=async(req,res)=>{
     const { token } = req.params;
@@ -26,7 +32,7 @@ export const resetpassword=async(req,res)=>{
 
   if (!user) return res.status(400).json({ message: "Invalid or expired token" });
 
-  user.password = password;
+  user.password = await hashPassword(password);
   user.resetToken = undefined;
   user.resetTokenExpiry = undefined;
   await user.save();

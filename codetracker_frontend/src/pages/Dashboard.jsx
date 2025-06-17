@@ -46,8 +46,8 @@ export default function UpcomingContests() {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center min-h-screen bg-gradient-to-b from-sky-100 via-sky-50 to-white">
-        <p className="text-blue-800 text-xl animate-pulse font-semibold uppercase tracking-wide">
+      <div className="min-h-screen bg-[#0f172a] text-white flex items-center justify-center">
+        <p className="text-blue-400 text-xl animate-pulse font-semibold tracking-wide uppercase">
           Loading Contests...
         </p>
       </div>
@@ -55,15 +55,15 @@ export default function UpcomingContests() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-sky-100 via-sky-50 to-white text-gray-800 px-4 py-12">
+    <div className="min-h-screen bg-[#0f172a] text-white px-4 py-12">
       {/* POTD and Calendar Section */}
-      <div className="max-w-6xl mx-auto mb-16 grid grid-cols-1 lg:grid-cols-2 gap-10">
-        {/* POTD Section */}
-        <div>
+      <div className="max-w-6xl mx-auto mb-20 grid grid-cols-1 lg:grid-cols-2 gap-10">
+        {/* POTD */}
+        <div className="p-6">
           <div className="flex items-center gap-3 mb-4">
             <BsLightningFill className="text-pink-500 text-2xl" />
-            <h3 className="text-xl font-semibold tracking-wide uppercase">
-              Problems of the Day
+            <h3 className="text-xl font-semibold tracking-wide text-blue-300">
+              Problem of the Day
             </h3>
           </div>
           <div className="flex flex-col gap-4">
@@ -72,11 +72,11 @@ export default function UpcomingContests() {
           </div>
         </div>
 
-        {/* Calendar Section */}
-        <div>
+        {/* Calendar */}
+        <div className="p-6">
           <div className="flex items-center gap-3 mb-4">
-            <FaCalendarAlt className="text-2xl text-blue-800" />
-            <h3 className="text-xl font-semibold tracking-wide uppercase">
+            <FaCalendarAlt className="text-2xl text-blue-500" />
+            <h3 className="text-xl font-semibold tracking-wide text-blue-300">
               Contest Calendar
             </h3>
           </div>
@@ -88,15 +88,15 @@ export default function UpcomingContests() {
 
       {/* Upcoming Contests Header */}
       <div className="text-center mb-12">
-        <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold uppercase tracking-tight flex items-center justify-center gap-4 text-blue-900">
-          <MdUpcoming className="text-blue-700 text-4xl" />
+        <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-blue-400 flex items-center justify-center gap-4">
+          <MdUpcoming className="text-blue-600 text-4xl" />
           Upcoming Contests
         </h2>
       </div>
 
-      {/* Contest Cards or Empty Message */}
+      {/* Contest Cards */}
       {upcomingContests.length === 0 ? (
-        <p className="text-center text-xl font-medium uppercase tracking-widest text-gray-600">
+        <p className="text-center text-lg text-slate-400 uppercase tracking-widest">
           No Upcoming Contests
         </p>
       ) : (

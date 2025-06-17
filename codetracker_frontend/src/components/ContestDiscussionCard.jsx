@@ -7,24 +7,23 @@ const ContestDiscussionCard = ({ contest }) => {
   });
 
   return (
-    <div className="relative group bg-[#0F172A]/40 backdrop-blur-md border border-blue-800 rounded-2xl p-6 shadow-md hover:shadow-blue-500/30 transition-all duration-300 hover:scale-[1.02] overflow-hidden">
+    <div className="relative group backdrop-blur-md border border-blue-700 rounded-xl p-5 shadow-md hover:shadow-blue-500/30 transition-transform duration-300 hover:scale-[1.02] overflow-hidden">
 
-      {/* Gradient border glow on hover */}
-      <div className="absolute inset-0 rounded-2xl border-2 border-transparent group-hover:border-blue-500 group-hover:shadow-[0_0_30px_#3b82f6] transition-all duration-300 pointer-events-none"></div>
+      {/* Hover glow border effect */}
+      <div className="absolute inset-0 rounded-xl border-2 border-transparent group-hover:border-blue-500 group-hover:shadow-[0_0_25px_#3b82f6] transition-all duration-300 pointer-events-none"></div>
 
-      {/* Contest Title */}
-      <h2 className="text-xl font-bold mb-2 text-slate-100 group-hover:text-blue-400 transition-colors duration-300">
+      {/* Contest Name */}
+      <h2 className="text-lg sm:text-xl font-bold text-white mb-2 group-hover:text-blue-400 transition-colors">
         🚀 {contest.name}
       </h2>
 
-      {/* Platform + Date */}
-      <p className="text-sm text-slate-400 mb-4">
-        🖥️ Platform:{" "}
-        <span className="font-semibold text-blue-400">{contest.platform}</span> &nbsp;|&nbsp; 📅 Date:{" "}
-        <span className="text-slate-300">{formattedDate}</span>
+      {/* Platform and Date */}
+      <p className="text-sm text-slate-400 mb-3">
+        🖥️ Platform: <span className="font-semibold text-blue-400">{contest.platform}</span>
+        &nbsp;|&nbsp; 📅 Date: <span className="text-slate-300">{formattedDate}</span>
       </p>
 
-      {/* YouTube Links */}
+      {/* Discussion Links */}
       <div>
         <h3 className="text-sm font-semibold text-slate-300 mb-2">🎥 Discussion Videos:</h3>
         {contest.youtubeLinks && contest.youtubeLinks.length > 0 ? (

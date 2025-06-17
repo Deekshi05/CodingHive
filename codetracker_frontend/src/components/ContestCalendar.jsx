@@ -19,6 +19,7 @@ const ContestCalendar = ({ contests }) => {
       )
       .map((contest) => new Date(contest.startTime).getDate())
   );
+
   const weekdays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
   const calendarCells = [];
   for (let i = 0; i < firstDayOfMonth; i++) calendarCells.push(null);
@@ -26,16 +27,15 @@ const ContestCalendar = ({ contests }) => {
 
   return (
     <div className="w-full flex justify-center mt-10 px-4 font-mono">
-      <div className="bg-[#0e1b30] border border-white/10 backdrop-blur-sm text-white p-6 rounded-2xl w-full max-w-sm shadow-2xl">
+      <div className="bg-[#111827] border border-white/10 backdrop-blur-md text-white p-6 rounded-2xl w-full max-w-sm shadow-[0_0_20px_rgba(0,200,255,0.1)]">
         <div className="flex items-center justify-between mb-5">
-          <h2 className="text-lg font-bold tracking-widest text-blue-400 uppercase">
+          <h2 className="text-lg font-bold tracking-widest text-white uppercase">
             Contest Calendar
           </h2>
-          <FiCalendar size={20} className="text-blue-400" />
+          <FiCalendar size={22} className="text-white" />
         </div>
 
-        <div className="grid grid-cols-7 text-center text-xs font-bold text-gray-400 mb-3 uppercase tracking-wide">
-          
+        <div className="grid grid-cols-7 text-center text-xs font-bold text-gray-400 mb-2 uppercase tracking-wider">
           {weekdays.map((day) => (
             <div key={day}>{day[0]}</div>
           ))}
@@ -54,9 +54,9 @@ const ContestCalendar = ({ contests }) => {
                 className={`w-9 h-9 flex items-center justify-center rounded-lg text-sm font-bold transition-all duration-200
                   ${
                     isContestDay
-                      ? "bg-white text-[#0e1b30] shadow-md shadow-white/30"
+                      ? "bg-blue-500 text-white shadow-lg"
                       : isToday
-                      ? "border border-blue-400 text-blue-300 bg-white/10"
+                      ? "border border-white text-white bg-white/10"
                       : "text-gray-400 hover:bg-white/5"
                   }`}
               >

@@ -23,8 +23,8 @@ const PastContestsPage = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-[#0F172A] py-8 px-4">
-      <h1 className="text-3xl font-bold mb-6 text-center text-white flex items-center justify-center gap-2">
+    <div className="min-h-screen bg-[#0f172a] text-white font-mono px-4 py-10">
+      <h1 className="text-3xl sm:text-4xl font-bold mb-10 text-center flex items-center justify-center gap-3">
         <FaRegCalendarAlt className="text-blue-500" />
         Past Contests & Discussions
       </h1>
@@ -34,8 +34,9 @@ const PastContestsPage = () => {
       ) : contests.length === 0 ? (
         <p className="text-center text-gray-400">No contests available.</p>
       ) : (
-        <div className="bg-blue-900/20 backdrop-blur-md rounded-2xl p-6 shadow-md">
-          <div className="flex flex-col gap-4">
+        // Use the feature card background here:
+        <div className="bg-[#111827] border border-white/10 rounded-2xl shadow-xl p-6 max-w-4xl mx-auto">
+          <div className="flex flex-col gap-6">
             {contests.map((contest, index) => (
               <ContestDiscussionCard key={index} contest={contest} />
             ))}
