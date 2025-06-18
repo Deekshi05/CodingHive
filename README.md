@@ -11,7 +11,6 @@
   - Login alerts
   - Password resets
   - Feature/feedback submission
-- Combined user stats from various competitive platforms
 - Problem of the Day (POTD) from integrated coding platforms
 
 ## 🛠 Tech Stack
@@ -23,7 +22,7 @@
 * **Email Services**: Nodemailer
 * **APIs**:
   - **Clist.by API** – for fetching upcoming contests
-  - **GitHub-hosted APIs** – for LeetCode & GFG user stats and POTDs
+  - **GitHub-hosted APIs** – for POTDs
   - **YouTube Data API v3** – for editorial and solution videos
 
 ## 📬 Email Triggers via Nodemailer

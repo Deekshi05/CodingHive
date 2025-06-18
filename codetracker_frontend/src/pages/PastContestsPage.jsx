@@ -8,16 +8,19 @@ const PastContestsPage = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchContests = async () => {
-      try {
-        const response = await axiosClient.get("/past-contests");
-        setContests(response.data.data || []);
-      } catch (error) {
-        console.error("Failed to fetch contests:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
+   const fetchContests = async () => {
+  try {
+    const response = await axiosClient.get("/past-contests");
+    const data = response.data.data;
+
+    // Ensure contests is always an array
+    setContests(Array.isArray(data) ? data : [data]);
+  } catch (error) {
+    console.error("Failed to fetch contests:", error);
+  } finally {
+    setLoading(false);
+  }
+};
 
     fetchContests();
   }, []);

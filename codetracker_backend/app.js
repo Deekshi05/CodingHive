@@ -1,6 +1,6 @@
 import express from "express";
 import { connectClient } from "./config/mongodb_config.js";
-import { authRoute, dashboardRoute, passwordRoute ,profileRoute} from "./routes/index.js";
+import { authRoute, dashboardRoute, passwordRoute} from "./routes/index.js";
 import {fetchYoutubeDiscussions} from "./controllers/index.js";
 
 import cookieParser from "cookie-parser";
@@ -25,7 +25,6 @@ async function startServer() {
 
     app.use("/",authRoute);
     app.use("/",passwordRoute);
-    app.use("/",profileRoute);
     app.use("/dashboard",dashboardRoute);
     app.get("/past-contests",fetchYoutubeDiscussions);
 

@@ -108,12 +108,14 @@ export const fetchYoutubeDiscussions = async (req, res) => {
       }
     }
 
-    const result = contestsThisMonth.map(contest => ({
-      name: contest.contestName,
-      platform: contest.platform,
-      startTime: contest.startTime,
-      youtubeLinks: (discussedMap.get(contest._id.toString()) || []).slice(0, 3),
-    }));
+   const result = contestsThisMonth
+  .sort((a, b) => b.startTime - a.startTime) // Sort by most recent startTime
+  .map(contest => ({
+    name: contest.contestName,
+    platform: contest.platform,
+    startTime: contest.startTime,
+    youtubeLinks: (discussedMap.get(contest._id.toString()) || []).slice(0, 3),
+  }));
 
     return res.json({
       message: "YouTube discussion links for contests in the current month",

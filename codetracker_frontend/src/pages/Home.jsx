@@ -26,7 +26,7 @@ export default function Home() {
               "Login / Signup",
               "Browse Contests",
               "Solve Daily Problems",
-              "Join Discussions"
+              "Go through post-contest solutions on YouTube"
             ].map((step, idx) => (
               <div
                 key={idx}

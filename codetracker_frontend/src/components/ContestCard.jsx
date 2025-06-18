@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { FiClock } from "react-icons/fi";
-import leetcode_logo from "../assets/LeetCode_logo.png";
+import leetCode_logo from "../assets/leetCode_logo.png";
 import codeforces_logo from "../assets/codeforces_logo.png";
 import codechef_logo from "../assets/codechef_logo.avif";
 import dayjs from "dayjs";
@@ -42,12 +42,13 @@ const ContestCard = ({ contest }) => {
   }, [parsedStartTime]);
 
   const platformLogos = {
-    LeetCode: leetcode_logo,
+    Leetcode: leetCode_logo,
     Codeforces: codeforces_logo,
     Codechef: codechef_logo,
   };
 
   const logo = platformLogos[contest.platform] || "";
+  // console.log(contest.platform);
 
   return (
     <div className="bg-[#111827] border border-white/10 p-6 rounded-2xl shadow-xl transition-transform transform hover:-translate-y-1 hover:shadow-blue-500/30 w-full max-w-3xl mx-auto mb-6">

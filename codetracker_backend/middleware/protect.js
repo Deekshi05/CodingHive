@@ -1,5 +1,6 @@
 import jwt from "jsonwebtoken";
 import {User} from "../models/users.js";
+
 export const protect = async (req, res, next) => {
   const token = req.cookies.token || req.headers.authorization?.split(" ")[1];
   // console.log("🔐 Incoming token:", token);
@@ -8,7 +9,6 @@ export const protect = async (req, res, next) => {
     // console.log("❌ No token provided");
     return res.status(401).json({ error: "Not authorized" });
   }
-
   try {
     const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
     // console.log("✅ Token decoded:", decoded);

@@ -1,7 +1,6 @@
 import { Potd } from "../../models/Potd.js";
-import {getLeetcodePotd} from "../../utils/potds/leetcode.js";
-import {getGfgPotd} from "../../utils/potds/gfg.js";
-
+import { getLeetcodePotd } from "../../utils/potds/leetcode.js";
+import { getGfgPotd } from "../../utils/potds/gfg.js";
 import moment from "moment";
 
 export const potdController = async (req, res) => {
@@ -33,7 +32,12 @@ export const potdController = async (req, res) => {
       });
     }
 
-    // 3. Send response
+    // 🔁 3. Delete outdated POTDs (before today)
+    await Potd.deleteMany({
+      lastUpdated: { $lt: today.toDate() }
+    });
+
+    // 4. Send response
     return res.status(200).json({
       message: "POTDs fetched successfully",
       leetcode: leetcodePotd.url,
@@ -48,4 +52,3 @@ export const potdController = async (req, res) => {
     });
   }
 };
-

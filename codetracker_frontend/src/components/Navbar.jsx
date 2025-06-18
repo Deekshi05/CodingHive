@@ -39,7 +39,6 @@ export default function Navbar() {
   <div className="flex space-x-6">
     <Link to="/" className={navLinkClass("/")}>Home</Link>
     <Link to="/dashboard" className={navLinkClass("/dashboard")}>Dashboard</Link>
-    <Link to="/profile" className={navLinkClass("/profile")}>Profile</Link>
     <Link to="/past-contests" className={navLinkClass("/past-contests")}>ContestDiscussions</Link>
   </div>
 
