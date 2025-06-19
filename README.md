@@ -4,14 +4,29 @@
 
 ## 🔑 Features
 
-- OAuth login with Google
-- Contest calendar from Codeforces, LeetCode, AtCoder, and CodeChef using public APIs
-- YouTube-based post-contest video solutions fetched via YouTube Data API
-- Nodemailer for email notifications:
-  - Login alerts
-  - Password resets
-  - Feature/feedback submission
-- Problem of the Day (POTD) from integrated coding platforms
+- 🔐 **OAuth Login with Google**  
+  Secure authentication through Google Sign-In.
+
+- 📅 **Contest Calendar**  
+  Displays upcoming contests from:
+  - Codeforces
+  - LeetCode
+  - CodeChef  
+  (Fetched using public APIs and github hosted APIs)
+
+- 🎥 **YouTube-Based Post-Contest Video Solutions**  
+  Automatically fetched using the YouTube Data API.
+
+- 📧 **Email Notifications (Nodemailer)**  
+  - 🔔 Login alerts  
+  - 🔄 Password resets  
+  - 💡 Feature and feedback submissions
+
+- 📌 **Problem of the Day (POTD)**  
+  Daily problems curated from integrated coding platforms.
+
+- 📊 **User Profile Stats**  
+  View ratings and number of problems solved for each platform (e.g., codechef, Codeforces) on the profile page.
 
 ## 🛠 Tech Stack
 
