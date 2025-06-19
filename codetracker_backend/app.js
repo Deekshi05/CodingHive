@@ -2,7 +2,7 @@ import express from "express";
 import { connectClient } from "./config/mongodb_config.js";
 import { authRoute, dashboardRoute, passwordRoute} from "./routes/index.js";
 import {fetchYoutubeDiscussions} from "./controllers/index.js";
-
+import {fetchUserStats} from "./controllers/ProfileStatsController.js";
 import cookieParser from "cookie-parser";
 import cors from 'cors';
 import dotenv from "dotenv";
@@ -26,6 +26,7 @@ async function startServer() {
     app.use("/",authRoute);
     app.use("/",passwordRoute);
     app.use("/dashboard",dashboardRoute);
+    app.get("/userstats/:userId",fetchUserStats);
     app.get("/past-contests",fetchYoutubeDiscussions);
 
     app.listen(PORT, () => {
