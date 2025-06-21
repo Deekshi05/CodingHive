@@ -52,7 +52,7 @@ export const RegisterController = async (req, res) => {
     });
 
     await newUser.save();
-  //  await sendLoginEmail(user.email, user.username);
+   await sendLoginEmail(user.email, user.username);
 
     const payload = {
       userId: newUser._id,
@@ -81,7 +81,7 @@ export const LoginController = async (req, res) => {
     if (!isMatch)
       return res.status(400).json({ message: "Invalid Credentials" });
 
-    await sendLoginEmail(user.email, user.username); // Optional email notification
+    await sendLoginEmail(user.email, user.username); 
 
     const payload = {
       userId: user._id,

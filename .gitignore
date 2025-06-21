@@ -1,8 +1,11 @@
 # Ignore node modules
 **/node_modules/
 
-# Ignore environment files
-**/.env
+# === dotenv files ===
+codinghive_backend/.env
+codinghive_backend/.env.*
+codinghive_frontend/.env
+codinghive_frontend/.env.*
 
 # Ignore build files
 **/build/

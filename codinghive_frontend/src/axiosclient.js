@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const axiosClient = axios.create({
-  baseURL: "http://localhost:5000",
+  baseURL: import.meta.env.VITE_BACKEND_URL,
   withCredentials: true,
 });
 
@@ -30,7 +30,7 @@ axiosClient.interceptors.response.use(
       originalRequest._retry = true;
       try {
         const res = await axios.post(
-          "http://localhost:5000/token/refresh",
+          `${import.meta.env.VITE_BACKEND_URL}/token/refresh`,
           {},
           { withCredentials: true }
         );

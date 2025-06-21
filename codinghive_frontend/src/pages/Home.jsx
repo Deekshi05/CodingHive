@@ -26,7 +26,7 @@ export default function Home() {
               "Login / Signup",
               "Browse Contests",
               "Solve Daily Problems",
-              "Go through post-contest solutions on YouTube"
+              "Go through post-contest YouTube solution links" 
             ].map((step, idx) => (
               <div
                 key={idx}
@@ -36,32 +36,6 @@ export default function Home() {
                   {idx + 1}
                 </div>
                 <p className="text-slate-400">{step}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Community Stats */}
-      <section className="py-16">
-        <div className="container mx-auto px-6 text-center">
-          <h2 className="text-3xl md:text-4xl font-bold text-blue-400 mb-12">
-            Community in Numbers
-          </h2>
-          <div className="flex flex-wrap justify-center gap-8">
-            {[
-              { num: "500+", label: "Active Users" },
-              { num: "2000+", label: "Problems Solved" },
-              { num: "100+", label: "Contests Tracked" }
-            ].map((stat, i) => (
-              <div
-                key={i}
-                className="bg-[#111827] border border-white/10 p-6 rounded-2xl shadow-xl transition-transform transform hover:-translate-y-1 hover:shadow-blue-500/30 w-64"
-              >
-                <div className="text-4xl font-extrabold text-blue-400 mb-2">
-                  {stat.num}
-                </div>
-                <p className="text-slate-400 text-sm">{stat.label}</p>
               </div>
             ))}
           </div>
