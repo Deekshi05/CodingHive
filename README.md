@@ -59,13 +59,6 @@
   - Grouped by difficulty (Easy / Medium / Hard)
   - Categorized by problem tags (e.g., Arrays, Graphs, DP)
   - Shows problem status (Attempted, Solved, Unsolved)
-
----
-
-## 📸 Screenshots
-
-*Add screenshots or a demo GIF here to visually showcase the UI and features*
-
 ---
 # 📝 Prerequisites
 
