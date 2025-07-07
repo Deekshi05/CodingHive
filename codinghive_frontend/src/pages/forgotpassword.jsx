@@ -1,10 +1,11 @@
 import React, { useState } from "react";
 import axiosClient from "../axiosclient.js";
 import { HiMail } from "react-icons/hi";
+import { toast } from "react-toastify";
 
 export default function ForgotPassword() {
   const [email, setEmail] = useState("");
-  const [message, setMessage] = useState(null);
+  const [message, setMessage] = useState(null); 
   const [error, setError] = useState(null);
 
   const handleSubmit = async () => {
@@ -12,9 +13,11 @@ export default function ForgotPassword() {
       const res = await axiosClient.post("/forgot-password", { email });
       setMessage(res.data.message);
       setError(null);
+      toast.success(res.data.message); // show success toast
     } catch (err) {
       setMessage(null);
       setError("User not found");
+      toast.error("User not found"); // show error toast
     }
   };
 
@@ -42,18 +45,6 @@ export default function ForgotPassword() {
         >
           Request Reset Link
         </button>
-
-        {message && (
-          <div className="mt-4 text-green-700 bg-green-100 p-3 rounded-lg border border-green-300 text-sm">
-            {message}
-          </div>
-        )}
-
-        {error && (
-          <div className="mt-4 text-red-700 bg-red-100 p-3 rounded-lg border border-red-300 text-sm">
-            {error}
-          </div>
-        )}
       </div>
     </div>
   );

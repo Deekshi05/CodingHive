@@ -1,9 +1,8 @@
 import axios from "axios";
 import { UpcomingContest } from "../../models/upcomingContests.js";
-import { get } from "mongoose";
 
-const API_USERNAME = "Deekshu@04";
-const API_KEY = "5f077a631060729e5789b49b4bed4df99ba8281f";
+const API_USERNAME = process.env.API_USERNAME;
+const API_KEY = process.env.API_KEY;
 
 export const getCodeChefContests = async () => {
   try {
@@ -11,8 +10,8 @@ export const getCodeChefContests = async () => {
     const year = now.getFullYear();
     const month = now.getMonth();
 
-    const monthStart = new Date(year, month, 1).toISOString();         // e.g., 2025-06-01T00:00:00.000Z
-    const monthEnd = new Date(year, month + 1, 1).toISOString();       // e.g., 2025-07-01T00:00:00.000Z
+    const monthStart = new Date(year, month, 1).toISOString();         
+    const monthEnd = new Date(year, month + 1, 1).toISOString();
 
     const response = await axios.get("https://clist.by/api/v4/contest/", {
       headers: {

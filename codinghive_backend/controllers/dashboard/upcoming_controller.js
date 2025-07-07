@@ -22,7 +22,7 @@ export const getupcomingcontests = async (req, res) => {
       console.log("Updating contests since data is stale or missing...");
 
       // Fetch from platforms
-      // await getCodeChefContests();
+      await getCodeChefContests();
       await getCodeforcesContests();
       await getLeetCodeContests();
 

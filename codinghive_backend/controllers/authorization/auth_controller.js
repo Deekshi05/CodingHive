@@ -52,7 +52,7 @@ export const RegisterController = async (req, res) => {
     });
 
     await newUser.save();
-   await sendLoginEmail(user.email, user.username);
+    await sendLoginEmail(newUser.email, newUser.username);
 
     const payload = {
       userId: newUser._id,
@@ -74,14 +74,13 @@ export const LoginController = async (req, res) => {
   const { email, password } = req.body;
   try {
     const user = await User.findOne({ email });
-    if (!user)
-      return res.status(400).json({ message: "Invalid Credentials" });
+    if (!user) return res.status(400).json({ message: "Invalid Credentials" });
 
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch)
       return res.status(400).json({ message: "Invalid Credentials" });
 
-    await sendLoginEmail(user.email, user.username); 
+    await sendLoginEmail(user.email, user.username);
 
     const payload = {
       userId: user._id,
@@ -127,14 +126,13 @@ export const LogoutController = (req, res) => {
 };
 
 export const GoogleLoginController = async (req, res) => {
-  const { token } = req.body;
+  const { credential } = req.body;
 
   try {
     const ticket = await client.verifyIdToken({
-      idToken: token,
+      idToken: credential,
       audience: process.env.GOOGLE_CLIENT_ID,
     });
-
     const { email, name } = ticket.getPayload();
 
     let user = await User.findOne({ email });
@@ -155,7 +153,7 @@ export const GoogleLoginController = async (req, res) => {
       username: user.username,
       email: user.email,
     };
-    
+
     const accessToken = generateAccessToken(payload);
     const refreshToken = generateRefreshToken(payload);
 

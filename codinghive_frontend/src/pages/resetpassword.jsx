@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axiosClient from "../axiosclient.js";
+import { toast } from "react-toastify";
 
 export default function ResetPassword() {
   const { token } = useParams();
@@ -14,10 +15,12 @@ export default function ResetPassword() {
       await axiosClient.post(`/reset-password/${token}`, { password });
       setMessage("Password reset successful!");
       setError("");
-      setTimeout(() => navigate("/login"), 2000); // redirect after 2s
+      toast.success("Password reset successful!");
+      setTimeout(() => navigate("/login"), 2000);
     } catch (err) {
       setError("Invalid or expired token");
       setMessage("");
+      toast.error("Invalid or expired token");
     }
   };
 
@@ -42,18 +45,6 @@ export default function ResetPassword() {
         >
           Reset Password
         </button>
-
-        {message && (
-          <p className="mt-4 text-green-700 bg-green-100 p-3 rounded-lg text-sm text-center">
-            {message}
-          </p>
-        )}
-
-        {error && (
-          <p className="mt-4 text-red-700 bg-red-100 p-3 rounded-lg text-sm text-center">
-            {error}
-          </p>
-        )}
       </div>
     </div>
   );

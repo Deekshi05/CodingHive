@@ -5,6 +5,7 @@ import ProblemsSolvedCard from "../components/profile/ProblemsSolvedCard";
 import codeforces_logo from "../assets/codeforces_logo.png";
 import codechef_logo from "../assets/codechef_logo.avif";
 import { GiLaurelsTrophy } from "react-icons/gi";
+import HandleEditor from "../components/profile/HandleEditor.jsx";
 
 const getUserIdFromToken = () => {
   const token = localStorage.getItem("accessToken");
@@ -23,6 +24,7 @@ const getUserIdFromToken = () => {
 const Profile = () => {
   const [codeforces, setCodeforces] = useState(null);
   const [codechef, setCodechef] = useState(null);
+  const [handles, setHandles] = useState({});
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -38,6 +40,7 @@ const Profile = () => {
         const response = await axiosClient(`/userstats/${userId}`);
         setCodeforces(response.data.Codeforces);
         setCodechef(response.data.CodeChef);
+        setHandles(response.data.handles);
       } catch (err) {
         console.error("Error fetching stats", err);
       } finally {
@@ -70,34 +73,49 @@ const Profile = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-[#0f172a] text-white py-10 px-4">
-      <div className="max-w-6xl mx-auto">
-        <h1 className="text-3xl font-bold text-center mb-10">
+    <div className="min-h-screen bg-[#0f172a] text-white py-8 px-4">
+      <div className="max-w-5xl mx-auto space-y-12">
+        
+        {/* Page Heading */}
+        <h1 className="text-3xl md:text-4xl font-bold text-center text-blue-400">
           📊 Coding Profile Overview
         </h1>
-        <h2 className="text-2xl font-semibold mb-4 text-center flex items-center justify-center gap-2 text-white">
-          <GiLaurelsTrophy className="text-yellow-400 text-2xl" />
-          Ratings
-        </h2>
-        {/* Rating Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
-          <RatingCard
-            platform="Codeforces"
-            currentRating={codeforces.currentRating}
-            highestRating={codeforces.highestRating}
-          />
-          <RatingCard
-            platform="CodeChef"
-            currentRating={codechef.currentRating}
-            highestRating={codechef.highestRating}
-          />
+
+        {/* Handle Editor */}
+        <div className="bg-[#111827] p-6 rounded-xl shadow-lg">
+          <HandleEditor handles={handles} setHandles={setHandles} />
         </div>
 
-        {/* Problems Solved */}
-        <h2 className="text-2xl font-semibold mb-4 text-center">
-          ✅ Problems Solved
-        </h2>
-        <ProblemsSolvedCard stats={problemStats} />
+        {/* Ratings Section */}
+        <div>
+          <h2 className="text-2xl font-semibold text-center flex items-center justify-center gap-2 mb-6 text-white">
+            <GiLaurelsTrophy className="text-yellow-400 text-3xl" />
+            Ratings
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <RatingCard
+              platform="Codeforces"
+              currentRating={codeforces.currentRating}
+              highestRating={codeforces.highestRating}
+            />
+            <RatingCard
+              platform="CodeChef"
+              currentRating={codechef.currentRating}
+              highestRating={codechef.highestRating}
+            />
+          </div>
+        </div>
+
+        {/* Problems Solved Section */}
+        <div className="mt-8">
+          <h2 className="text-2xl font-semibold text-center mb-6 text-green-400">
+            ✅ Problems Solved
+          </h2>
+          <div className="bg-[#111827] p-6 rounded-xl shadow-lg">
+            <ProblemsSolvedCard stats={problemStats} />
+          </div>
+        </div>
+        
       </div>
     </div>
   );

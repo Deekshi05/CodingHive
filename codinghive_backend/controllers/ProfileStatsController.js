@@ -18,7 +18,7 @@ export const fetchUserStats = async (req, res) => {
     const result = {};
 
     for (const platform of platforms) {
-      const handle = user.handles.get(platform.toLowerCase()); // e.g. 'codeforces'
+      const handle = user.handles.get(platform.toLowerCase());
       if (!handle) {
         result[platform] = { error: `${platform} handle not found.` };
         continue;
@@ -35,7 +35,7 @@ export const fetchUserStats = async (req, res) => {
       let newStats = null;
 
       if (platform === "Codeforces") {
-        newStats = await getCodeforcesStats(handle, userId); // return stats object
+        newStats = await getCodeforcesStats(userId); 
       } else if (platform === "CodeChef") {
         newStats = await getCodechefStats(handle, userId);
       }
@@ -52,7 +52,16 @@ export const fetchUserStats = async (req, res) => {
       }
     }
 
-    res.json(result);
+    // Convert Map to plain JS object
+    const handleObject = {};
+    user.handles.forEach((val, key) => {
+      handleObject[key] = val;
+    });
+    // console.log(handleObject);
+    res.json({
+      ...result,
+      handles: handleObject,
+    });
 
   } catch (error) {
     console.error("❌ Error fetching user stats:", error.message);

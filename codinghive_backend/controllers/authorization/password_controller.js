@@ -16,8 +16,13 @@ export const forgotpassword = async (req, res) => {
   user.resetTokenExpiry = expiry;
   await user.save();
 
+  try {
   await sendResetPasswordEmail(email, resetToken);
-
+  console.log("successfully sent msg");
+} catch (error) {
+  console.error("Failed to send email:", error);
+  return res.status(500).json({ message: "Failed to send reset email" });
+}
   res.json({ message: "Reset email sent successfully" });
 };
 

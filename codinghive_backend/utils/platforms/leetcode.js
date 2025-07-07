@@ -1,9 +1,7 @@
 import axios from "axios";
 import { UpcomingContest } from "../../models/upcomingContests.js";
-
-const API_USERNAME = "Deekshu@04";
-const API_KEY = "5f077a631060729e5789b49b4bed4df99ba8281f";
-
+const API_USERNAME = process.env.API_USERNAME;
+const API_KEY = process.env.API_KEY;
 export const getLeetCodeContests = async () => {
   try {
     const now = new Date();

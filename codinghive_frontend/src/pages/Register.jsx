@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axiosClient from "../axiosclient.js";
 import { FaUser, FaEnvelope, FaLock, FaCode } from "react-icons/fa";
+import { toast } from "react-toastify"; // <-- Import toast
 
 function Register() {
   const [form, setForm] = useState({
@@ -15,7 +16,6 @@ function Register() {
     },
   });
 
-  const [message, setMessage] = useState("");
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -44,13 +44,15 @@ function Register() {
         handles: filteredHandles,
       });
 
-      setMessage(res.data.message || "Registered successfully");
+      toast.success("🎉 Registered successfully!");
+
       if (res.data.accessToken) {
         localStorage.setItem("accessToken", res.data.accessToken);
       }
       navigate("/dashboard");
+      // setTimeout(() => navigate("/dashboard"), 2000); // Delayed redirect
     } catch (err) {
-      setMessage(err.response?.data?.message || "Registration failed");
+      toast.error(err.response?.data?.message || "❌ Registration failed");
     }
   };
 
@@ -133,10 +135,6 @@ function Register() {
             Register
           </button>
         </form>
-
-        {message && (
-          <p className="text-center text-sm text-blue-300">{message}</p>
-        )}
       </div>
     </div>
   );

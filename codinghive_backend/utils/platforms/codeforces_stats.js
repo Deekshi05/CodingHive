@@ -4,27 +4,26 @@ import { User } from "../../models/users.js";
 
 const ONE_DAY_MS = 24 * 60 * 60 * 1000;
 
-export const getCodeforcesStats = async (req, res) => {
+export const getCodeforcesStats = async (userId) => {
+  const platform = "Codeforces";
+  const now = new Date();
+
   try {
-    const userId = req.params.userId;
-    const platform = "Codeforces";
-    const now = new Date();
-     console.log(userId);
     // Step 1: Fetch user
     const user = await User.findById(userId);
     if (!user || !user.handles || !user.handles.get("codeforces")) {
-      return res.status(404).json({ error: "Codeforces username not found for this user." });
+      throw new Error("Codeforces username not found for this user.");
     }
 
     const username = user.handles.get("codeforces");
-    console.log(username);
+
     // Step 2: Check existing stats
     const existing = await UserStats.findOne({ userId, platform });
     const isStale = !existing || (now - new Date(existing.lastFetched)) > ONE_DAY_MS;
 
     if (!isStale) {
       console.log("✅ Returning cached Codeforces data");
-      return res.json(existing);
+      return existing;
     }
 
     // Step 3: Fetch fresh data from Codeforces API
@@ -34,7 +33,7 @@ export const getCodeforcesStats = async (req, res) => {
     ]);
 
     if (userInfoRes.data.status !== "OK" || submissionsRes.data.status !== "OK") {
-      return res.status(500).json({ error: "Codeforces API returned an error." });
+      throw new Error("Codeforces API returned an error.");
     }
 
     const userData = userInfoRes.data.result[0];
@@ -83,7 +82,7 @@ export const getCodeforcesStats = async (req, res) => {
       streak,
       lastFetched: new Date(),
     };
-    console.log(newStats);
+
     // Step 7: Save or update stats
     const updated = await UserStats.findOneAndUpdate(
       { userId, platform },
@@ -92,12 +91,13 @@ export const getCodeforcesStats = async (req, res) => {
     );
 
     console.log("📦 Updated Codeforces stats from API");
-    return res.json(updated);
+    return updated;
+
   } catch (error) {
     console.error("❌ Error in getCodeforcesStats:", error.message);
-    return res.status(500).json({
+    return {
       platform: "Codeforces",
       error: error.message || "Unknown error"
-    });
+    };
   }
 };
