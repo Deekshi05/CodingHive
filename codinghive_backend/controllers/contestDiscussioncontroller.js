@@ -30,6 +30,15 @@ export const fetchYoutubeDiscussions = async (req, res) => {
       fetchTimes.set(doc.contestId.toString(), doc.lastFetched || new Date(0));
     }
 
+    // Check if YouTube API is enabled and has API key
+    const isYouTubeEnabled = process.env.ENABLE_YOUTUBE_API !== 'false' && YOUTUBE_API_KEY;
+    
+    if (isYouTubeEnabled) {
+      console.log("🎥 YouTube API is enabled - attempting to fetch new videos");
+    } else {
+      console.log("ℹ️ YouTube API is disabled - returning existing data only");
+    }
+
     for (const contest of contestsThisMonth) {
       const contestId = contest._id.toString();
       const platform = contest.platform.trim();
@@ -40,11 +49,18 @@ export const fetchYoutubeDiscussions = async (req, res) => {
       const lastFetched = fetchTimes.get(contestId) || new Date(0);
 
       const shouldFetch =
+        isYouTubeEnabled &&
         contest.startTime < now &&
         (existingLinks.length < 3 || lastFetched < oneDayAgo);
 
       if (shouldFetch) {
         try {
+          // Check if API key is available
+          if (!YOUTUBE_API_KEY) {
+            console.error("❌ YouTube API key not found in environment variables");
+            continue;
+          }
+
           const additionalKeywords = [
             "solution",
             "editorial",
@@ -53,6 +69,8 @@ export const fetchYoutubeDiscussions = async (req, res) => {
             platform,
           ];
           const searchQuery = contestName;
+
+          console.log(`🔍 Searching YouTube for: ${searchQuery}`);
 
           const searchResponse = await axios.get(
             "https://www.googleapis.com/youtube/v3/search",
@@ -138,7 +156,14 @@ export const fetchYoutubeDiscussions = async (req, res) => {
             fetchTimes.set(contestId, new Date());
           }
         } catch (err) {
-          console.error("❌ Error in fetching contest discussions:", err.message);
+          console.error(`❌ Error fetching YouTube data for contest "${contestName}":`, err.response?.status, err.response?.data?.error?.message || err.message);
+          
+          // If it's a 403 quota error, just skip this contest but continue with others
+          if (err.response?.status === 403) {
+            console.log("⚠️ YouTube API quota exceeded - skipping new fetches but will return existing data");
+          }
+          // Continue with next contest instead of breaking the whole process
+          continue;
         }
       }
     }

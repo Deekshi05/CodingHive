@@ -12,7 +12,7 @@ export default function ResetPassword() {
 
   const handleReset = async () => {
     try {
-      await axiosClient.post(`/reset-password/${token}`, { password });
+      await axiosClient.post(`/password/reset-password/${token}`, { password });
       setMessage("Password reset successful!");
       setError("");
       toast.success("Password reset successful!");

@@ -1,25 +1,30 @@
 import jwt from "jsonwebtoken";
-import {User} from "../models/users.js";
+import { User } from "../models/users.js";
 
 export const protect = async (req, res, next) => {
-  const token = req.cookies.token || req.headers.authorization?.split(" ")[1];
-  // console.log("🔐 Incoming token:", token);
+  let token;
+
+  // Try to get token from cookies first
+  token = req.cookies.accessToken;
+
+  // If not in cookies, try to get from Authorization header
+  if (!token && req.headers.authorization && req.headers.authorization.startsWith('Bearer ')) {
+    token = req.headers.authorization.split(' ')[1];
+  }
 
   if (!token) {
-    // console.log("❌ No token provided");
-    return res.status(401).json({ error: "Not authorized" });
+    return res.status(401).json({ error: "Not authorized, no token provided" });
   }
+
   try {
     const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
-    // console.log("✅ Token decoded:", decoded);
     req.user = await User.findById(decoded.userId).select("-password");
     if (!req.user) {
-      // console.log("❌ User not found in DB");
       return res.status(401).json({ error: "User not found" });
     }
     next();
   } catch (err) {
-    // console.log("❌ Token invalid or expired:", err.message);
+    console.log("Token verification error:", err.message);
     return res.status(401).json({ error: "Invalid token" });
   }
 };

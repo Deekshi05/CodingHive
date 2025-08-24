@@ -6,7 +6,6 @@ import { OAuth2Client } from "google-auth-library";
 
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
-// Helpers
 export const hashPassword = async (password) => {
   const salt = await bcrypt.genSalt(10);
   return bcrypt.hash(password, salt);
@@ -23,14 +22,28 @@ const generateRefreshToken = ({ userId, username, email }) =>
   });
 
 const sendTokenResponse = (res, accessToken, refreshToken, status = 200) => {
-  res.cookie("refreshToken", refreshToken, {
+  // Set cookies for token storage
+  res.cookie('accessToken', accessToken, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "Strict",
-    maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'lax',
+    maxAge: 15 * 60 * 1000, // 15 minutes (should match ACCESS_TOKEN_EXPIRY)
   });
-  return res.status(status).json({ accessToken });
+
+  res.cookie('refreshToken', refreshToken, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'lax',
+    maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days (should match REFRESH_TOKEN_EXPIRY)
+  });
+
+  return res.status(status).json({
+    message: "Tokens generated successfully",
+    accessToken,
+    refreshToken,
+  });
 };
+
 
 // Controllers
 export const RegisterController = async (req, res) => {
@@ -63,7 +76,7 @@ export const RegisterController = async (req, res) => {
     const accessToken = generateAccessToken(payload);
     const refreshToken = generateRefreshToken(payload);
 
-    return sendTokenResponse(res, accessToken, refreshToken, 201);
+    return sendTokenResponse(res, accessToken, refreshToken);
   } catch (error) {
     console.error("Registration error:", error);
     return res.status(500).json({ message: "Server Error" });
@@ -99,11 +112,12 @@ export const LoginController = async (req, res) => {
 };
 
 export const refreshTokenController = (req, res) => {
-  const token = req.cookies.refreshToken;
-  if (!token)
+  const { refreshToken } = req.body;  // Now expect refresh token in request body
+
+  if (!refreshToken)
     return res.status(401).json({ message: "Refresh Token not found" });
 
-  jwt.verify(token, process.env.REFRESH_TOKEN_SECRET, (err, decoded) => {
+  jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, (err, decoded) => {
     if (err) return res.status(403).json({ message: "Invalid Refresh Token" });
 
     const accessToken = generateAccessToken({
@@ -112,16 +126,25 @@ export const refreshTokenController = (req, res) => {
       email: decoded.email,
     });
 
-    return res.json({ accessToken });
+    // Set the new access token as a cookie
+    res.cookie('accessToken', accessToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      maxAge: 15 * 60 * 1000, // 15 minutes
+    });
+
+    return res.json({
+      message: "Access token refreshed successfully",
+      accessToken,
+    });
   });
 };
-
 export const LogoutController = (req, res) => {
-  res.clearCookie("refreshToken", {
-    httpOnly: true,
-    sameSite: "Strict",
-    secure: process.env.NODE_ENV === "production",
-  });
+  // Clear the access and refresh token cookies
+  res.clearCookie('accessToken');
+  res.clearCookie('refreshToken');
+  
   return res.json({ message: "Logged out successfully" });
 };
 

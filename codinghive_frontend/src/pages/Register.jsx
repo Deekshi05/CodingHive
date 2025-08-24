@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axiosClient from "../axiosclient.js";
 import { FaUser, FaEnvelope, FaLock, FaCode } from "react-icons/fa";
-import { toast } from "react-toastify"; // <-- Import toast
+import { toast } from "react-toastify";
 
 function Register() {
   const [form, setForm] = useState({
@@ -32,25 +32,25 @@ function Register() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     const filteredHandles = Object.fromEntries(
       Object.entries(form.handles).filter(([_, val]) => val.trim() !== "")
     );
 
     try {
-      const res = await axiosClient.post("/register", {
-        username: form.username,
-        email: form.email,
-        password: form.password,
-        handles: filteredHandles,
-      });
+      await axiosClient.post(
+        "/register",
+        {
+          username: form.username,
+          email: form.email,
+          password: form.password,
+          handles: filteredHandles,
+        },
+        { withCredentials: true }
+      );
 
       toast.success("🎉 Registered successfully!");
-
-      if (res.data.accessToken) {
-        localStorage.setItem("accessToken", res.data.accessToken);
-      }
       navigate("/dashboard");
-      // setTimeout(() => navigate("/dashboard"), 2000); // Delayed redirect
     } catch (err) {
       toast.error(err.response?.data?.message || "❌ Registration failed");
     }
@@ -65,7 +65,7 @@ function Register() {
 
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Username */}
-          <div className="flex items-center border border-gray-700 rounded-lg px-3 py-2 bg-[#0f172a]">
+          <div className="flex items-center border border-gray-700 rounded-lg px-3 py-2 bg-[#0f172a] focus-within:ring-2 focus-within:ring-blue-500">
             <FaUser className="text-gray-400 mr-2" />
             <input
               name="username"
@@ -78,7 +78,7 @@ function Register() {
           </div>
 
           {/* Email */}
-          <div className="flex items-center border border-gray-700 rounded-lg px-3 py-2 bg-[#0f172a]">
+          <div className="flex items-center border border-gray-700 rounded-lg px-3 py-2 bg-[#0f172a] focus-within:ring-2 focus-within:ring-blue-500">
             <FaEnvelope className="text-gray-400 mr-2" />
             <input
               name="email"
@@ -92,7 +92,7 @@ function Register() {
           </div>
 
           {/* Password */}
-          <div className="flex items-center border border-gray-700 rounded-lg px-3 py-2 bg-[#0f172a]">
+          <div className="flex items-center border border-gray-700 rounded-lg px-3 py-2 bg-[#0f172a] focus-within:ring-2 focus-within:ring-blue-500">
             <FaLock className="text-gray-400 mr-2" />
             <input
               name="password"
@@ -106,14 +106,14 @@ function Register() {
           </div>
 
           {/* Optional Handles */}
-          <h4 className="text-blue-400 font-semibold mt-6 text-sm">
+          <h4 className="text-blue-400 font-semibold mt-4 text-sm">
             Optional Coding Handles
           </h4>
 
           {["leetcode", "codeforces", "codechef"].map((platform) => (
             <div
               key={platform}
-              className="flex items-center border border-gray-700 rounded-lg px-3 py-2 bg-[#0f172a]"
+              className="flex items-center border border-gray-700 rounded-lg px-3 py-2 bg-[#0f172a] focus-within:ring-2 focus-within:ring-blue-500"
             >
               <FaCode className="text-gray-400 mr-2" />
               <input

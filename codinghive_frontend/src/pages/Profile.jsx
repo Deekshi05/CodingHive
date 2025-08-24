@@ -26,11 +26,12 @@ const Profile = () => {
   const [codechef, setCodechef] = useState(null);
   const [handles, setHandles] = useState({});
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     const userId = getUserIdFromToken();
     if (!userId) {
-      console.error("User ID not found in token");
+      setError("User not authenticated. Please login again.");
       setLoading(false);
       return;
     }
@@ -40,9 +41,10 @@ const Profile = () => {
         const response = await axiosClient(`/userstats/${userId}`);
         setCodeforces(response.data.Codeforces);
         setCodechef(response.data.CodeChef);
-        setHandles(response.data.handles);
+        setHandles(response.data.handles || {});
       } catch (err) {
         console.error("Error fetching stats", err);
+        setError("Failed to fetch user stats.");
       } finally {
         setLoading(false);
       }
@@ -51,13 +53,21 @@ const Profile = () => {
     fetchStats();
   }, []);
 
-  if (loading)
+  if (loading) {
     return <p className="text-center text-gray-400 mt-10">Loading...</p>;
+  }
 
-  if (!codeforces || !codechef)
+  if (error) {
+    return <p className="text-center text-red-500 mt-10">{error}</p>;
+  }
+
+  if (!codeforces || !codechef) {
     return (
-      <p className="text-center text-red-500 mt-10">Stats not available</p>
+      <p className="text-center text-red-500 mt-10">
+        Stats not available. Please ensure coding handles are set correctly.
+      </p>
     );
+  }
 
   const problemStats = [
     {

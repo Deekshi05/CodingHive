@@ -17,7 +17,12 @@ function Login() {
     e.preventDefault();
     try {
       const res = await axiosClient.post("/login", form);
-      localStorage.setItem("accessToken", res.data.accessToken);
+      const { accessToken, refreshToken } = res.data;
+
+      // Store tokens in localStorage
+      localStorage.setItem("accessToken", accessToken);
+      localStorage.setItem("refreshToken", refreshToken);
+
       toast.success("Login successful ✅");
       navigate("/dashboard");
     } catch (err) {
@@ -30,7 +35,11 @@ function Login() {
       const res = await axiosClient.post("/google-login", {
         credential: credentialResponse.credential,
       });
-      localStorage.setItem("accessToken", res.data.accessToken);
+      const { accessToken, refreshToken } = res.data;
+
+      localStorage.setItem("accessToken", accessToken);
+      localStorage.setItem("refreshToken", refreshToken);
+
       toast.success("Google login successful ✅");
       navigate("/dashboard");
     } catch (err) {

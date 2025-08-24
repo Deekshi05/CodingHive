@@ -10,7 +10,7 @@ export default function ForgotPassword() {
 
   const handleSubmit = async () => {
     try {
-      const res = await axiosClient.post("/forgot-password", { email });
+      const res = await axiosClient.post("/password/forgot-password", { email });
       setMessage(res.data.message);
       setError(null);
       toast.success(res.data.message); // show success toast
