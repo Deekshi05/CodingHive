@@ -1,7 +1,7 @@
 import React from "react";
 import codeforces_logo from "../assets/codeforces_logo.png";
 import codechef_logo from "../assets/codechef_logo.avif";
-import leetCode_logo from "../assets/leetCode_logo.png";
+import leetCode_logo from "../assets/LeetCode_logo.png";
 
 const ContestDiscussionCard = ({ contest }) => {
  const formattedDate = new Date(new Date(contest.startTime).getTime() + 5.5 * 60 * 60 * 1000).toLocaleString(undefined, {
