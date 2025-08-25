@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { FiClock } from "react-icons/fi";
-import leetCode_logo from "../assets/leetCode_logo.png";
+import leetCode_logo from "../assets/LeetCode_logo.png";
 import codeforces_logo from "../assets/codeforces_logo.png";
 import codechef_logo from "../assets/codechef_logo.avif";
 import dayjs from "dayjs";
