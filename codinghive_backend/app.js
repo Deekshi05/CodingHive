@@ -12,6 +12,15 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+// Handle preflight requests for all routes
+app.options('*', (req, res) => {
+  res.header('Access-Control-Allow-Origin', 'https://codinghive-frontend.onrender.com');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With');
+  res.header('Access-Control-Allow-Credentials', 'true');
+  res.sendStatus(200);
+});
+
 app.use(
   cors({
     origin: function (origin, callback) {
@@ -25,9 +34,10 @@ app.use(
         }
       }
       
-      // In production, only allow specific frontend URL
+      // In production, allow specific frontend URLs
       const allowedOrigins = [
         process.env.FRONTEND_URL,
+        'https://codinghive-frontend.onrender.com',
         'http://localhost:5173',
         'http://localhost:5174'
       ].filter(Boolean);
@@ -39,6 +49,8 @@ app.use(
       return callback(new Error('Not allowed by CORS'));
     },
     credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
   })
 );
 
