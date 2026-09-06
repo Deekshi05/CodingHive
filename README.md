@@ -2,8 +2,6 @@
 
 **Coding Hive** is your personalized dashboard for everything competitive programming. It integrates multiple coding platforms to help users stay updated with contests, practice daily problems, learn from past contests via YouTube, and track progress across sites — all in one place.
 ---
-## 🌐 Live Demo  
-👉 [Visit Coding Hive](https://codinghive-frontend.onrender.com)
 
 ## 🔑 Features
 
